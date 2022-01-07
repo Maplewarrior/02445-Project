@@ -1,2 +1,3 @@
 # 02445-Project
-# Testing...
+# Statistical evaluation of AI systems
+# Arm thrust data
