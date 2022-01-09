@@ -21,10 +21,11 @@ for (e in 1:16){
 vec_experiments <- c(rep("e1", 30000), rep("e2", 30000),rep("e3", 30000),rep("e4", 30000),rep("e5", 30000),rep("e6", 30000),
                      rep("e7", 30000),rep("e8", 30000),rep("e9", 30000),rep("e10", 30000),rep("e11", 30000),rep("e12", 30000),
                      rep("e13", 30000),rep("e14", 30000),rep("e15", 30000),rep("e16", 30000))
+
 people <- c(rep("p1", 3000), rep("p2", 3000),rep("p3", 3000),rep("p4", 3000),rep("p5", 3000),rep("p6", 3000),
                 rep("p7", 3000),rep("p8", 3000),rep("p9", 3000),rep("p10", 3000))
 
-vec_people <- c(rep(people, 10))
+vec_people <- c(rep(people, 16))
 
 x_coords <- c(rep("x",100))
 y_coords <- c(rep("y",100))
