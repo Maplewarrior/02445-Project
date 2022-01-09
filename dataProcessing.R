@@ -246,6 +246,7 @@ df_e16 <- data.frame(vec_e16_data, vec_e16_groups)
 
 
 
+
 LM_e1 <- lm(vec_e1_data ~ vec_e1_groups, data = df_e1)
 LM_e2 <- lm(vec_e2_data ~ vec_e2_groups, data = df_e2)
 LM_e3 <- lm(vec_e3_data ~ vec_e3_groups, data = df_e3)
