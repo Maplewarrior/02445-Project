@@ -122,6 +122,16 @@ for (i in length(new_nan_indexes):1){
 
 write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessed.csv", row.names = F)
 
+# Save a .csv file containing all labels
+distances <- c(rep("15", 90000), rep("22.5",90000),rep("30",90000),rep("37.5",90000), rep("45",90000), rep(NA, 30000))
+distances[449999:450001]
+
+obstacle <- c(rep("S", 30000), rep("M", 30000), rep("L", 30000))
+obstacles <-c(rep(obstacle, 5), rep(NA, 30000))
+
+df_all_labels <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people, distances, obstacles)
+write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedAllLabels.csv", row.names = F)
+
 # vec_e1_groups <- c(rep("e1_p1", 3000),rep("e1_p2", 3000),rep("e1_p3", 3000),rep("e1_p4", 3000),
 #                    rep("e1_p5", 3000),rep("e1_p6", 3000),rep("e1_p7", 3000),rep("e1_p8", 3000),
 #                    rep("e1_p9", 3000),rep("e1_p10", 3000))
