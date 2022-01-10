@@ -6,6 +6,7 @@ load("armdata.RData")
 # p people: 1:10
 # r repetitions: 1:10
 # i measurements: 1:300
+
 data_all_exps <- c(NA, 16*10*10*300)
 count = 1
 for (e in 1:16){
@@ -36,6 +37,54 @@ vec_coords <- c(rep(c(x_coords,y_coords,z_coords),1600))
 df_all <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people)
 
 
+# Remove NaN's 
+num_nans <- length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
+nan_indexes <- which(is.na(df_all$data_all_exps), arr.ind = T, useNames=F)
+nan_indexes[2]
+
+
+  
+test_index = nan_indexes[1]
+test_index
+
+test = T
+if (df_all$vec_coords[test_index] == df_all$vec_coords[test_index+1]){
+  if (test == T){print("success")
+  }
+}
+
+for (i in 1:num_nans){
+  below = FALSE
+  above = FALSE
+  index = nan_indexes[i]
+  
+  below_value = df_all$data_all_exps[index+1]
+  above_value = df_all$data_all_exps[index-1]
+  
+  # Check if the below value of a NaN is also a NaN
+  if (df_all$vec_coords[index] == df_all$vec_coords[index+1]){
+  if (is.na(below_value) == FALSE){
+    below = TRUE
+  }}
+  # Check if the above value of a NaN is not a NaN
+  if (df_all$vec_coords[index] == df_all$vec_coords[index-1]){
+    if (is.na(above_value) == FALSE){
+      above = TRUE
+    }}
+  
+  if (above == T && below ==T){
+    df_all$data_all_exps[index] = (below_value + above_value)/2
+    }
+  if (above == T){
+    df_all$data_all_exps[index] = above_value
+  }
+  if (below == T){
+    df_all$data_all_exps[index] = below_value
+  }
+}
+
+length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
+new_nan_indexes
 
 # vec_e1_groups <- c(rep("e1_p1", 3000),rep("e1_p2", 3000),rep("e1_p3", 3000),rep("e1_p4", 3000),
 #                    rep("e1_p5", 3000),rep("e1_p6", 3000),rep("e1_p7", 3000),rep("e1_p8", 3000),
