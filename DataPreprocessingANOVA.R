@@ -36,29 +36,36 @@ vec_coords <- c(rep(c(x_coords,y_coords,z_coords),1600))
 
 df_all <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people)
 
+# Test
+# df_all$data_all_exps[384206]
+# df_all$data_all_exps[384205]
+# df_all$data_all_exps[384204]
+# df_all$data_all_exps[384203]
+# df_all$data_all_exps[384202]
+# df_all$data_all_exps[384201]
 
-# Remove NaN's 
+# Remove NaN's from df_all
 num_nans <- length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
 nan_indexes <- which(is.na(df_all$data_all_exps), arr.ind = T, useNames=F)
-nan_indexes[2]
-
-
   
-test_index = nan_indexes[1]
-test_index
+# test_index = nan_indexes[1]
+# test_index
 
-test = T
-if (df_all$vec_coords[test_index] == df_all$vec_coords[test_index+1]){
-  if (test == T){print("success")
-  }
-}
+# test = T
+# if (df_all$vec_coords[test_index] == df_all$vec_coords[test_index+1]){
+#   if (test == T){print("success")
+#   }
+# }
+# is.na(df_all$data_all_exps[test_index])
 
 for (i in 1:num_nans){
   below = FALSE
+  below_2 = FALSE
   above = FALSE
   index = nan_indexes[i]
   
   below_value = df_all$data_all_exps[index+1]
+  below_2_value = df_all$data_all_exps[index+2]
   above_value = df_all$data_all_exps[index-1]
   
   # Check if the below value of a NaN is also a NaN
@@ -66,6 +73,10 @@ for (i in 1:num_nans){
   if (is.na(below_value) == FALSE){
     below = TRUE
   }}
+  if (df_all$vec_coords[index] == df_all$vec_coords[index+2]){
+  if (is.na(below_value_2) ==FALSE) {
+    below_2 = TRUE}}
+  
   # Check if the above value of a NaN is not a NaN
   if (df_all$vec_coords[index] == df_all$vec_coords[index-1]){
     if (is.na(above_value) == FALSE){
@@ -75,16 +86,41 @@ for (i in 1:num_nans){
   if (above == T && below ==T){
     df_all$data_all_exps[index] = (below_value + above_value)/2
     }
-  if (above == T){
+  if (above == T && below == F){
     df_all$data_all_exps[index] = above_value
   }
-  if (below == T){
+  if (below == T && above == F){
     df_all$data_all_exps[index] = below_value
   }
+  if (below == F && below_2 == T){
+    df_all$data_all_exps[index] = below_2_value
+  }
+}
+# Check the number of remanining NaN values
+#length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
+
+# Get the indices of the remaining NaN values
+new_nan_indexes <- which(is.na(df_all$data_all_exps), arr.ind = T, useNames=F)
+
+# Replace the remaining NaN values with the previous valid value.
+for (i in length(new_nan_indexes):1){
+  index <- new_nan_indexes[i]
+  print(index)
+  df_all$data_all_exps[index] <- df_all$data_all_exps[index+1]
 }
 
-length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
-new_nan_indexes
+# Test if the replacing was done correctly (index 384204 and below were all originally NaN's)
+# df_all$data_all_exps[384206]
+# df_all$data_all_exps[384205]
+# df_all$data_all_exps[384204]
+# df_all$data_all_exps[384203]
+# df_all$data_all_exps[384202]
+# df_all$data_all_exps[384201]
+
+
+# Save dataframe as a .csv file
+
+write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessed.csv", row.names = F)
 
 # vec_e1_groups <- c(rep("e1_p1", 3000),rep("e1_p2", 3000),rep("e1_p3", 3000),rep("e1_p4", 3000),
 #                    rep("e1_p5", 3000),rep("e1_p6", 3000),rep("e1_p7", 3000),rep("e1_p8", 3000),
