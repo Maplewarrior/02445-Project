@@ -132,6 +132,12 @@ obstacles <-c(rep(obstacle, 5), rep(NA, 30000))
 df_all_labels <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people, distances, obstacles)
 write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedAllLabels.csv", row.names = F)
 
+
+
+
+
+# Delete this? 
+
 # vec_e1_groups <- c(rep("e1_p1", 3000),rep("e1_p2", 3000),rep("e1_p3", 3000),rep("e1_p4", 3000),
 #                    rep("e1_p5", 3000),rep("e1_p6", 3000),rep("e1_p7", 3000),rep("e1_p8", 3000),
 #                    rep("e1_p9", 3000),rep("e1_p10", 3000))
