@@ -3,118 +3,118 @@
 
 # Convert data from R file to .csv
 load("armdata.RData")
-
-# 16 experiments, 10 people in each experiment that repeat the motion 10 times. 
-
-length(armdata)
-
-# Acesss experiments
-length(armdata[[1]])
-
-# Access people
-length(armdata[[1]][[1]])
-# Access repetition
-length(armdata[[1]][[1]][[1]])
-
-# Access datapoint within repetition
-armdata[[1]][[1]][[1]][201:300]
-
-X <- rnorm(5,0,1)
-Y <- rnorm(5,2,1)
-Lin_m <- lm(Y~X)
-anova(Lin_m)$Pr[1]
-
-
-
-# for (e in 1:length(armdata)){
-#   for (p in 1:length(armdata[[1]])){
-#    for (r in 1:length(armdata[[1]][[1]])){
-#      for i in 1:length(armdata[[1]][[1]][[1]]){
-#        
-#       }
-#     }
-#   }
-# }
-
-
-# armdata[[1]][[1]][[2]]
-mean(armdata[[1]][[1]][[2]][1:100])
-
-# armdata[[1]][[1]][[2]][101:200]
-# armdata[[1]][[1]][[2]][201:300]
-
-
-### 1) Assess if there is a significant effect of person of the observed trajectories. 
-
-
-# ANOVA on means where x, y and z are separated.
-
-People <- list("p1","p2","p3","p4","p5","p6","p7","p8","p9","p10")
-Reps <- c("r1","r2","r3","r4","r5","r6","r7","r8","r9","r10")
-e1_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e1_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e1_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-
-e2_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e2_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e2_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-
-e3_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e3_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-e3_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
-
-for (i in 1:10){
-  for (j in 1:10){
-    e1_means_x[j,i] <- mean(armdata[[1]][[i]][[j]][1:100])
-    e1_means_y[j,i] <- mean(armdata[[1]][[i]][[j]][101:200])
-    e1_means_z[j,i] <- mean(armdata[[1]][[i]][[j]][201:300])
-    
-    e2_means_x[j,i] <- mean(armdata[[2]][[i]][[j]][1:100])
-    e2_means_y[j,i] <- mean(armdata[[2]][[i]][[j]][101:200])
-    e2_means_z[j,i] <- mean(armdata[[2]][[i]][[j]][201:300])
   
-    e3_means_x[j,i] <- mean(armdata[[3]][[i]][[j]][1:100])
-    e3_means_y[j,i] <- mean(armdata[[3]][[i]][[j]][101:200])
-    e3_means_z[j,i] <- mean(armdata[[3]][[i]][[j]][201:300])
+  # 16 experiments, 10 people in each experiment that repeat the motion 10 times. 
+  
+  length(armdata)
+  
+  # Acesss experiments
+  length(armdata[[1]])
+  
+  # Access people
+  length(armdata[[1]][[1]])
+  # Access repetition
+  length(armdata[[1]][[1]][[1]])
+  
+  # Access datapoint within repetition
+  armdata[[1]][[1]][[1]][201:300]
+  
+  X <- rnorm(5,0,1)
+  Y <- rnorm(5,2,1)
+  Lin_m <- lm(Y~X)
+  anova(Lin_m)$Pr[1]
+  
+  
+  
+  # for (e in 1:length(armdata)){
+  #   for (p in 1:length(armdata[[1]])){
+  #    for (r in 1:length(armdata[[1]][[1]])){
+  #      for i in 1:length(armdata[[1]][[1]][[1]]){
+  #        
+  #       }
+  #     }
+  #   }
+  # }
+  
+  
+  # armdata[[1]][[1]][[2]]
+  mean(armdata[[1]][[1]][[2]][1:100])
+  
+  # armdata[[1]][[1]][[2]][101:200]
+  # armdata[[1]][[1]][[2]][201:300]
+  
+  
+  ### 1) Assess if there is a significant effect of person of the observed trajectories. 
+  
+  
+  # ANOVA on means where x, y and z are separated.
+  
+  People <- list("p1","p2","p3","p4","p5","p6","p7","p8","p9","p10")
+  Reps <- c("r1","r2","r3","r4","r5","r6","r7","r8","r9","r10")
+  e1_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e1_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e1_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  
+  e2_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e2_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e2_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  
+  e3_means_x <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e3_means_y <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  e3_means_z <- matrix(,nrow = 10, ncol = 10, byrow = T, dimnames = list(Reps, People))
+  
+  for (i in 1:10){
+    for (j in 1:10){
+      e1_means_x[j,i] <- mean(armdata[[1]][[i]][[j]][1:100])
+      e1_means_y[j,i] <- mean(armdata[[1]][[i]][[j]][101:200])
+      e1_means_z[j,i] <- mean(armdata[[1]][[i]][[j]][201:300])
+      
+      e2_means_x[j,i] <- mean(armdata[[2]][[i]][[j]][1:100])
+      e2_means_y[j,i] <- mean(armdata[[2]][[i]][[j]][101:200])
+      e2_means_z[j,i] <- mean(armdata[[2]][[i]][[j]][201:300])
+    
+      e3_means_x[j,i] <- mean(armdata[[3]][[i]][[j]][1:100])
+      e3_means_y[j,i] <- mean(armdata[[3]][[i]][[j]][101:200])
+      e3_means_z[j,i] <- mean(armdata[[3]][[i]][[j]][201:300])
+    }
   }
-}
-
-
-vec_e1_grps <- c(rep("e1_p1", 10),rep("e1_p2", 10),rep("e1_p3", 10),rep("e1_p4", 10),
-                   rep("e1_p5", 10),rep("e1_p6", 10),rep("e1_p7", 10),rep("e1_p8", 10),
-                   rep("e1_p9", 10),rep("e1_p10", 10))
-vec_e2_grps <- c(rep("e2_p1", 10),rep("e2_p2", 10),rep("e2_p3", 10),rep("e2_p4", 10),
-                 rep("e2_p5", 10),rep("e2_p6", 10),rep("e2_p7", 10),rep("e2_p8", 10),
-                 rep("e2_p9", 10),rep("e2_p10", 10))
-
-vec_e3_grps <- c(rep("e3_p1", 10),rep("e3_p2", 10),rep("e3_p3", 10),rep("e3_p4", 10),
-                 rep("e3_p5", 10),rep("e3_p6", 10),rep("e3_p7", 10),rep("e3_p8", 10),
-                 rep("e3_p9", 10),rep("e3_p10", 10))
-
-vec_e1_data_x <- c(e1_means_x); vec_e1_data_y <- c(e1_means_y); vec_e1_data_z <- c(e1_means_z)
-vec_e2_data_x <- c(e2_means_x); vec_e2_data_y <- c(e2_means_y); vec_e2_data_z <- c(e2_means_z)
-vec_e3_data_x <- c(e3_means_x); vec_e3_data_y <- c(e3_means_y); vec_e3_data_z <- c(e3_means_z)
- 
-df_e1_mean_x <- data.frame(vec_e1_data_x, vec_e1_grps); df_e1_mean_y <- data.frame(vec_e1_data_y, vec_e1_grps); df_e1_mean_z <- data.frame(vec_e1_data_z, vec_e1_grps)
-df_e2_mean_x <- data.frame(vec_e2_data_x, vec_e2_grps); df_e2_mean_y <- data.frame(vec_e2_data_y, vec_e2_grps); df_e2_mean_z <- data.frame(vec_e2_data_z, vec_e2_grps)
-df_e3_mean_x <- data.frame(vec_e3_data_x, vec_e3_grps); df_e3_mean_y <- data.frame(vec_e3_data_y, vec_e3_grps); df_e3_mean_z <- data.frame(vec_e3_data_z, vec_e3_grps)
-
-
-LM_e1_mean_x <- lm(vec_e1_data_x ~ vec_e1_grps, data = df_e1_mean_x)
-LM_e1_mean_y <- lm(vec_e1_data_y ~ vec_e1_grps, data = df_e1_mean_y)
-LM_e1_mean_z <- lm(vec_e1_data_z ~ vec_e1_grps, data = df_e1_mean_z)
-
-LM_e2_mean_x <- lm(vec_e2_data_x ~ vec_e2_grps, data = df_e2_mean_x)
-LM_e2_mean_y <- lm(vec_e2_data_y ~ vec_e2_grps, data = df_e2_mean_y)
-LM_e2_mean_z <- lm(vec_e2_data_z ~ vec_e2_grps, data = df_e2_mean_z)
-
-LM_e3_mean_x <- lm(vec_e3_data_x ~ vec_e3_grps, data = df_e3_mean_x)
-LM_e3_mean_y <- lm(vec_e3_data_y ~ vec_e3_grps, data = df_e3_mean_y)
-LM_e3_mean_z <- lm(vec_e3_data_z ~ vec_e3_grps, data = df_e3_mean_z)
-
-anova(LM_e1_mean_x)$Pr[1]; anova(LM_e1_mean_y)$Pr[1]; anova(LM_e1_mean_z)$Pr[1]
-anova(LM_e2_mean_x)$Pr[1]; anova(LM_e2_mean_y)$Pr[1]; anova(LM_e2_mean_z)$Pr[1]
-anova(LM_e3_mean_x)$Pr[1]; anova(LM_e3_mean_y)$Pr[1]; anova(LM_e3_mean_z)$Pr[1]
+  
+  
+  vec_e1_grps <- c(rep("e1_p1", 10),rep("e1_p2", 10),rep("e1_p3", 10),rep("e1_p4", 10),
+                     rep("e1_p5", 10),rep("e1_p6", 10),rep("e1_p7", 10),rep("e1_p8", 10),
+                     rep("e1_p9", 10),rep("e1_p10", 10))
+  vec_e2_grps <- c(rep("e2_p1", 10),rep("e2_p2", 10),rep("e2_p3", 10),rep("e2_p4", 10),
+                   rep("e2_p5", 10),rep("e2_p6", 10),rep("e2_p7", 10),rep("e2_p8", 10),
+                   rep("e2_p9", 10),rep("e2_p10", 10))
+  
+  vec_e3_grps <- c(rep("e3_p1", 10),rep("e3_p2", 10),rep("e3_p3", 10),rep("e3_p4", 10),
+                   rep("e3_p5", 10),rep("e3_p6", 10),rep("e3_p7", 10),rep("e3_p8", 10),
+                   rep("e3_p9", 10),rep("e3_p10", 10))
+  
+  vec_e1_data_x <- c(e1_means_x); vec_e1_data_y <- c(e1_means_y); vec_e1_data_z <- c(e1_means_z)
+  vec_e2_data_x <- c(e2_means_x); vec_e2_data_y <- c(e2_means_y); vec_e2_data_z <- c(e2_means_z)
+  vec_e3_data_x <- c(e3_means_x); vec_e3_data_y <- c(e3_means_y); vec_e3_data_z <- c(e3_means_z)
+   
+  df_e1_mean_x <- data.frame(vec_e1_data_x, vec_e1_grps); df_e1_mean_y <- data.frame(vec_e1_data_y, vec_e1_grps); df_e1_mean_z <- data.frame(vec_e1_data_z, vec_e1_grps)
+  df_e2_mean_x <- data.frame(vec_e2_data_x, vec_e2_grps); df_e2_mean_y <- data.frame(vec_e2_data_y, vec_e2_grps); df_e2_mean_z <- data.frame(vec_e2_data_z, vec_e2_grps)
+  df_e3_mean_x <- data.frame(vec_e3_data_x, vec_e3_grps); df_e3_mean_y <- data.frame(vec_e3_data_y, vec_e3_grps); df_e3_mean_z <- data.frame(vec_e3_data_z, vec_e3_grps)
+  
+  
+  LM_e1_mean_x <- lm(vec_e1_data_x ~ vec_e1_grps, data = df_e1_mean_x)
+  LM_e1_mean_y <- lm(vec_e1_data_y ~ vec_e1_grps, data = df_e1_mean_y)
+  LM_e1_mean_z <- lm(vec_e1_data_z ~ vec_e1_grps, data = df_e1_mean_z)
+  
+  LM_e2_mean_x <- lm(vec_e2_data_x ~ vec_e2_grps, data = df_e2_mean_x)
+  LM_e2_mean_y <- lm(vec_e2_data_y ~ vec_e2_grps, data = df_e2_mean_y)
+  LM_e2_mean_z <- lm(vec_e2_data_z ~ vec_e2_grps, data = df_e2_mean_z)
+  
+  LM_e3_mean_x <- lm(vec_e3_data_x ~ vec_e3_grps, data = df_e3_mean_x)
+  LM_e3_mean_y <- lm(vec_e3_data_y ~ vec_e3_grps, data = df_e3_mean_y)
+  LM_e3_mean_z <- lm(vec_e3_data_z ~ vec_e3_grps, data = df_e3_mean_z)
+  
+  anova(LM_e1_mean_x)$Pr[1]; anova(LM_e1_mean_y)$Pr[1]; anova(LM_e1_mean_z)$Pr[1]
+  anova(LM_e2_mean_x)$Pr[1]; anova(LM_e2_mean_y)$Pr[1]; anova(LM_e2_mean_z)$Pr[1]
+  anova(LM_e3_mean_x)$Pr[1]; anova(LM_e3_mean_y)$Pr[1]; anova(LM_e3_mean_z)$Pr[1]
 
 
 ## ANOVA for each experiment & repetition.

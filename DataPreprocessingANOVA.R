@@ -9,12 +9,14 @@ load("armdata.RData")
 
 data_all_exps <- c(NA, 16*10*10*300)
 count = 1
+
 for (e in 1:16){
   for (p in 1:10){
     for (r in 1:10){
       for (i in 1:300){
         data_all_exps[count] <- armdata[[e]][[p]][[r]][[i]]
         count = count+1
+        
       }
     }
   }
@@ -47,16 +49,17 @@ df_all <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people)
 # Remove NaN's from df_all
 num_nans <- length(is.na(df_all$data_all_exps)[is.na(df_all$data_all_exps) == T])
 nan_indexes <- which(is.na(df_all$data_all_exps), arr.ind = T, useNames=F)
-  
+nan_indexes  
 # test_index = nan_indexes[1]
 # test_index
-
+# 7
 # test = T
 # if (df_all$vec_coords[test_index] == df_all$vec_coords[test_index+1]){
 #   if (test == T){print("success")
 #   }
 # }
 # is.na(df_all$data_all_exps[test_index])
+nan_indexes
 
 for (i in 1:num_nans){
   below = FALSE
@@ -122,19 +125,77 @@ for (i in length(new_nan_indexes):1){
 
 write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessed.csv", row.names = F)
 
-# Save a .csv file containing all labels
-distances <- c(rep("15", 90000), rep("22.5",90000),rep("30",90000),rep("37.5",90000), rep("45",90000), rep(NA, 30000))
+# Save a .csv file containing all labels 
+## The NA values in experiment 16 are set as "0"
+distances <- c(rep("15", 90000), rep("22.5",90000),rep("30",90000),rep("37.5",90000), rep("45",90000), rep(0, 30000))
 distances[449999:450001]
 
 obstacle <- c(rep("S", 30000), rep("M", 30000), rep("L", 30000))
-obstacles <-c(rep(obstacle, 5), rep(NA, 30000))
+obstacles <-c(rep(obstacle, 5), rep(0, 30000))
 
 df_all_labels <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people, distances, obstacles)
-write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedAllLabels.csv", row.names = F)
+write.csv(df_all_labels, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedAllLabels.csv", row.names = F)
 
 
+# R1
+df_all_labels$data_all_exps[336200:336201]
+# R2
+df_all_labels$data_all_exps[336500:336501]
+# R3
+df_all_labels$data_all_exps[336801:336801]
+# R4
+df_all_labels$data_all_exps[337100:337101]
+# R5
+df_all_labels$data_all_exps[337401]
+# R6
+df_all_labels$data_all_exps[337701]
+# R7
+df_all_labels$data_all_exps[338001]
+# R8
+df_all_labels$data_all_exps[338301]
+# R9
+df_all_labels$data_all_exps[338601]
+# R10
+df_all_labels$data_all_exps[338901]
 
+# Create dataframe for the mean of each coordinate for each repetition
 
+coord_count = 1
+data_all_means <- c(NA, (4800))
+for (i in 1:4800){
+  data_all_means[i] <- mean(data_all_exps[coord_count:(coord_count+99)])
+  coord_count = coord_count + 100 
+}
+
+vec_mean_people <- c("p1", "p2", "p3", "p4","p5", "p6", "p7", "p8","p9", "p10")
+mean_people <- c(rep(vec_mean_people, 16))
+mean_experiments <- c(rep("e1",10),rep("e2",10), rep("e3",10),rep("e4",10),rep("e5",10), rep("e6",10),
+                          rep("e7",10),rep("e8",10), rep("e9",10), rep("e10",10),rep("e11",10), rep("e12",10), 
+                          rep("e13",10),rep("e14",10), rep("e15",10), rep("e16", 10))
+vec_mean_coords <- c("x", "y", "z")
+mean_coords <- rep(vec_mean_coords, 16)
+
+df_all_means <- data.frame(data_all_means, mean_people, mean_experiments, mean_coords)
+
+# Create dataframe for the max value of each coordinate for each repetition
+
+data_all_max <- c(NA, (4800))
+max_count = 1
+for (i in 1:4800){
+  data_all_max[i] <- max(data_all_exps[max_count:(max_count+99)])
+  max_count = max_count + 100
+}
+vec_max_people <- c("p1", "p2", "p3", "p4","p5", "p6", "p7", "p8","p9", "p10")
+max_people <- c(rep(vec_mean_people, 16))
+max_experiments <- c(rep("e1",10),rep("e2",10), rep("e3",10),rep("e4",10),rep("e5",10), rep("e6",10),
+                      rep("e7",10),rep("e8",10), rep("e9",10), rep("e10",10),rep("e11",10), rep("e12",10), 
+                      rep("e13",10),rep("e14",10), rep("e15",10), rep("e16", 10))
+vec_max_coords <- c("x", "y", "z")
+max_coords <- rep(vec_mean_coords, 16)
+df_all_max <- data.frame(data_all_max, max_people, max_experiments, max_coords)
+
+write.csv(df_all_means, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedMeans.csv", row.names = F)
+write.csv(df_all_max, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedMaxs.csv", row.names = F)
 
 # Delete this? 
 
