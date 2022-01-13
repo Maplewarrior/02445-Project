@@ -5,37 +5,44 @@ from scipy.linalg import svd
 from sklearn import tree
 from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
+from NeuralNetworkModelFunction import *
+from LogisticRegressionModelFunction import *
+from sklearn.decomposition import PCA
 
-df = pd.read_csv("Data/armdataPreprocessedAllLabels.csv")
+#%%
+# df = pd.read_csv("Data/armdataPreprocessedAllLabels.csv")
 
 
-data = df["data_all_exps"].to_numpy(dtype=("float64"))
+# data = df["data_all_exps"].to_numpy(dtype=("float64"))
 
-y_vals = np.array([df["distances"], df["obstacles"]]).T
-# Remove the last 30000 values since there are no labels
-X = data[:450000]
-X = X.reshape(-1,1)
+# y_vals = np.array([df["distances"], df["obstacles"]]).T
+# # Remove the last 30000 values since there are no labels
+# X = data[:450000]
+# X = X.reshape(-1,1)
+
+X = np.load("Data/Data For Machine Learning/data_x.npy")
+y = np.load("Data/Data For Machine Learning/data_y.npy")
 
 
 # Make sure there are no NAN values
 assert len(np.isnan(X)[np.isnan(X) == True]) == 0
 
 
-# One-hot encoding the labels
-OneHotEncodings = np.empty((15,15))
-for i in range(15):
-    template = np.zeros(15)
-    template[i] = 1
-    OneHotEncodings[i] = template
+# # One-hot encoding the labels
+# OneHotEncodings = np.empty((15,15))
+# for i in range(15):
+#     template = np.zeros(15)
+#     template[i] = 1
+#     OneHotEncodings[i] = template
     
-y = np.empty((450000, 1))
+# y = np.empty((450000, 1))
 
 
 
-count = 30000
-for i in range(15):
-    y[(count-30000):count,:] = i
-    count += 30000
+# count = 30000
+# for i in range(15):
+#     y[(count-30000):count,:] = i
+#     count += 30000
 
 
 # Labels = {str(OneHotEncodings[0]): "d = 15 and S",
@@ -79,7 +86,7 @@ Labels = {0: "d = 15 and S",
           14: "d = 45 and T",
     }
 
-#%%
+
 def subtractMean(X):
     N = np.shape(X)[0]
     return X - np.ones((N, 1)) * X.mean(axis=0)
@@ -124,8 +131,8 @@ def projectData(data, V):
 
 
 #%%
-K1 = 2
-K2 = 3
+K1 = 5
+K2 = 5
 
 CV1 = StratifiedKFold(K1, shuffle = True)
 CV2 =  StratifiedKFold(K2, shuffle = True)
@@ -140,20 +147,34 @@ y = y.squeeze()
 
 
 # Set hyperparameters
-lambdas = np.power(10.,range(-6,6))
-T = np.arange(5,15,1)
+lambdas = np.power(10.,range(-8,8))
+T = np.arange(25,250,25)
+hiddenLayers = np.arange(2,20,1)
 
+optimal_trees = list()
+optimal_lambdas = list()
+optimal_hidden_layers = list()
 
 # Predefining variables
 val_errors_rf = np.empty((len(T),K2))
 val_errors_LogReg = np.empty((len(lambdas), K2))
+val_errors_ANN = np.empty((len(hiddenLayers),K2))
+
+
 
 gen_errors_rf = np.empty((K1, 1))
 gen_errors_LogReg = np.empty((K1, 1))
+gen_errors_ANN = np.empty((K1, 1))
 
+
+final_E_gen_RF = np.empty((K1, 1))
+final_E_gen_LogReg = np.empty((K1, 1))
+final_E_gen_ANN = np.empty((K1, 1))
 
 
 k = 0
+
+#%%
 for train_index, test_index in CV1.split(X, y):
     
     X_par = X[train_index]
@@ -161,17 +182,15 @@ for train_index, test_index in CV1.split(X, y):
     X_test = X[test_index]
     y_test = y[test_index]
     
-    # PCA on train
-    X_par = subtractMean(X_par)
-    X_par = divideByStdDev(X_par)
-    V_train = getVMatrix(X_par, 9)
-    X_par = projectData(X_par, V_train)
     
-    # PCA on test
-    X_test = subtractMean(X_test)
-    X_test = divideByStdDev(X_test)
-    V_test = getVMatrix(X_test, 9)
-    X_test = projectData(X_test, V_test)
+    pca = PCA(n_components = 9)
+    pca.fit(X_par)
+    
+    X_par = pca.transform(X_par)
+    X_test = pca.transform(X_test)
+    
+    
+    print("Outer dimensions:", X_par.shape)
     
     c = 0 
     for train_index, test_index in CV2.split(X_par, y_par):
@@ -179,6 +198,7 @@ for train_index, test_index in CV1.split(X, y):
         y_train = y_par[train_index]
         X_val = X_par[test_index]
         y_val = y_par[test_index]
+        print("Inner dimensions:", X_train.shape)
         
            
         for index, t in enumerate(T):
@@ -186,38 +206,78 @@ for train_index, test_index in CV1.split(X, y):
              rf_classifier.fit(X_train, y_train)
              y_est = rf_classifier.predict(X_val)
         
-             ErrorRate = (y_val!=y_est).sum(dtype=float) / len(y_val)
+             ErrorRateRF = (y_val!=y_est).sum(dtype=float) / len(y_val)
              
-             val_errors_rf[index, c] = ErrorRate
-        
-        # for i, l in enumerate(lambdas):
-            #...
-            #...
-        
+             val_errors_rf[index, c] = ErrorRateRF
+             
+        for index, h in enumerate(hiddenLayers):
+             ErrorRateANN = NeuralNetworkModel(X_train,X_val, y_train, y_val, h)
+             val_errors_ANN[index, c] = ErrorRateANN
+             
+        for index, l in enumerate(lambdas):
+             ErrorRateLogReg = LogisticRegressionModel(X_train,X_val, y_train,y_val,l)
+             val_errors_LogReg[index, c] = ErrorRateLogReg
+            
+            
         if c == K2-1: 
             # Find the index where the validation error is lowest amongst all 10 splits
-            opt_T_index = np.where(np.mean(val_errors_rf, axis = 1) == min(np.mean(val_errors_rf, axis = 1)))
-            opt_T_index = int(opt_T_index[0])
-            opt_T = T[opt_T_index]    
-        
+            opt_T_index = np.where(np.mean(val_errors_rf, axis = 1) == min(np.mean(val_errors_rf, axis = 1)))[0][0]
+            if not type(opt_T_index) == int:
+                opt_T_index = int(opt_T_index[0])
+            else:
+                opt_T_index = int(opt_T_index)
+            opt_T = T[opt_T_index]
+            optimal_trees.append(opt_T)
+            
+            opt_h_index = np.where(np.mean(val_errors_ANN, axis = 1) == min(np.mean(val_errors_ANN, axis = 1)))[0][0]
+            if not type(opt_h_index) == int:
+                opt_h_index = int(opt_h_index[0])
+            else:
+                opt_h_index = int(opt_h_index)
+            opt_h = hiddenLayers[opt_h_index]
+            optimal_hidden_layers.append(opt_h)
+            
+            opt_lambda_index = np.where(np.mean(val_errors_LogReg, axis = 1) == min(np.mean(val_errors_LogReg, axis = 1)))[0][0]
+            if not type(opt_lambda_index) == int:
+                opt_lambda_index = int(opt_lambda_index[0])
+            else:
+                opt_lambda_index = int(opt_lambda_index)
+            opt_lambda = lambdas[opt_lambda_index]    
+            optimal_lambdas.append(opt_lambda)
         c+= 1
     
-    # Train models on X_par, y_par and predict on X_test
+    # Estimate generalization error for the s models in the inner fold
+    gen_errors_rf[k] = ((X_val.shape[0] / X_par.shape[0]) * val_errors_rf[:,k]).sum(dtype = float)
+    gen_errors_LogReg[k] = ((X_val.shape[0] / X_par.shape[0]) * val_errors_LogReg[:,k]).sum(dtype = float)
+    gen_errors_ANN[k] = (X_val.shape[0] / X_par.shape[0] * val_errors_ANN).sum(dtype = float)
+    
+    
+    # Train the models using optimal parameters
+    
     
     rf_classifier = RandomForestClassifier(opt_T)
     rf_classifier.fit(X_par, y_par)
     y_est = rf_classifier.predict(X_test)
+   
+    ErrorRateRF = (y_test!=y_est).sum(dtype=float) / len(y_test)
     
-    rf_gen_err = (y_test!=y_est).sum(dtype=float) / len(y_test)
-    gen_errors_rf[k] = rf_gen_err
+    final_E_gen_RF[k] = ErrorRateRF
+    
+    ErrorRateANN = NeuralNetworkModel(X_par,X_test, y_par, y_test, opt_h)
+    final_E_gen_ANN[k] = ErrorRateANN
+    
+    ErrorRateLogReg = LogisticRegressionModel(X_par,X_test, y_par, y_test, opt_lambda)
+    final_E_gen_LogReg[k] = ErrorRateLogReg
+            
     k+= 1
     
-             
-        
-    
-
+print("RF final: ", final_E_gen_RF)
+print("ANN final: ", final_E_gen_ANN)
+print("LogReg final: ", final_E_gen_LogReg)
 #%%
 print(gen_errors_rf)
+
+opt_h_index
 # print(val_errors_rf)
 
 # values = np.array([[1,2,3,4],

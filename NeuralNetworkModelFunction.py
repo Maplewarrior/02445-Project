@@ -9,14 +9,14 @@ def NeuralNetworkModel(X_train,X_test,y_train,y_test,HiddenLayers):
     model = models.Sequential()
     
     for i in range(HiddenLayers):
-        model.add(layers.Dense(32, activation='relu'))
+        model.add(layers.Dense(8, activation='relu'))
     
     model.add(layers.Dense(15, activation='softmax'))
 
     model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer='adam', metrics=['accuracy'])
     
     # Fitting our model to our data
-    model.fit(X_train, y_train, batch_size=16, epochs=300, validation_data=(X_test, y_test))
+    model.fit(X_train, y_train, batch_size = 32, epochs=150, validation_data=(X_test, y_test))
     
     predictions = np.array(model.predict(X_test))
     
