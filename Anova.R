@@ -49,6 +49,8 @@ library("rgl")
 plot3d(x=data_all_exps[1:100],y=data_all_exps[101:200],z=data_all_exps[201:300],type = 's', 
        radius = .1,  xlab="x", ylab="y", zlab="z")
 
+#plot(data_all_exps[1:300])
+
 }
 
 ### Scatter plots
@@ -143,8 +145,9 @@ plot(fitted(L1), residuals(L1))
 }
 
 ###Look at the features 2-way ANOVA
-{
 #Mean
+{
+
 dfme <- read.csv("Project - 02445/Data/armdataPreprocessedMeans.csv")
 head(dfme)
 # X, Y, Z means should follow people and experiments
@@ -232,8 +235,8 @@ abline(0, sd(residuals(Lmep1e1)))
 anova(Lmep1e1)
 } #Useless anova tests
 
-
 #Max height
+{
 dfh <- read.csv("Project - 02445/Data/armdataPreprocessedMaxs.csv")
 head(dfh)
 dfh <- subset(dfh, dfh$max_coords=="z")
@@ -251,9 +254,8 @@ anova(Lhz)
 kruskal.test(dfh$data_all_max, dfh$max_people)
 kruskal.test(dfh$data_all_max, dfh$max_experiments)
 # p:0.04 for experiments which is the same finding as above with anova
-
+}
 {
-#For experiment 1
 dfh1 <- subset(dfh, dfh$max_experiments=="e16")
 head(dfh1)
 length(dfh1$data_all_max)
@@ -265,7 +267,47 @@ abline(0, sd(residuals(Lhz1)))
 anova(Lhz1)
 kruskal.test(dfh1$data_all_max, dfh1$max_people)
 #Same conclsuion that people dont have a significant effect on max height
+} #For single experiment 16
+
+#Curve length
+{
+dfl <- read.csv("Project - 02445/Data/armdataPreprocessedLength.csv")
+head(dfl)
+Ll <- lm(data_all_lengths ~ length_people * length_experiments, data = dfl)
+plot(fitted(Ll), residuals(Ll))
+qqnorm(residuals(Ll))
+abline(0, sd(residuals(Ll)))
+# Pretty normal - a few outliers at high range
+anova(Ll)
+
+max(dfl$data_all_lengths)
+length(dfl$data_all_lengths)
+boxplot(dfl$data_all_lengths)
+#We remove the 2 outliers with 130+ curve length so that anova gives a better results
+
+dfl_out <- dfl[dfl$data_all_lengths != max(dfl$data_all_lengths),]
+max(dfl$data_all_lengths)
+length(dfl_out$data_all_lengths)
+boxplot(dfl_out$data_all_lengths)       
+
+dfl_out2 <- dfl_out[dfl_out$data_all_lengths != max(dfl_out$data_all_lengths),]
+max(dfl_out2$data_all_lengths)
+length(dfl_out2$data_all_lengths)
+boxplot(dfl_out2$data_all_lengths)       
+
+Llo <- lm(data_all_lengths ~ length_people * length_experiments, data = dfl_out2)
+plot(fitted(Llo), residuals(Llo))
+qqnorm(residuals(Llo))
+abline(0, sd(residuals(Llo)))
+anova(Ll)
+
+
+kruskal.test(dfl$data_all_lengths, dfl$length_people)
+kruskal.test(dfl$data_all_lengths, dfl$length_experiments)
+
+
 }
+
 
 ####### EXPERIMENT 16 #####
 ## d=22.5 and obstacle=S   - using some assumptions
