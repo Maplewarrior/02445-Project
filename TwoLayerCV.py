@@ -123,19 +123,13 @@ def projectData(data, V):
     return data @ V
 
 
-X = subtractMean(X)
-
-
 #%%
 K1 = 2
-K2 = 5
-
-
+K2 = 3
 
 CV1 = StratifiedKFold(K1, shuffle = True)
 CV2 =  StratifiedKFold(K2, shuffle = True)
 
-errors = list()
 
 # Create smaller datasets for faster run time while debugging
 # X = X[:90000]
@@ -181,10 +175,10 @@ for train_index, test_index in CV1.split(X, y):
     
     c = 0 
     for train_index, test_index in CV2.split(X_par, y_par):
-        X_train = X[train_index]
-        y_train = y[train_index]
-        X_val = X[test_index]
-        y_val = y[test_index]
+        X_train = X_par[train_index]
+        y_train = y_par[train_index]
+        X_val = X_par[test_index]
+        y_val = y_par[test_index]
         
            
         for index, t in enumerate(T):
