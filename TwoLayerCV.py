@@ -220,25 +220,27 @@ for train_index, test_index in CV1.split(X, y):
             
             
         if c == K2-1: 
-            # Find the index where the validation error is lowest amongst all 10 splits
+            # Optimal number of trees
             opt_T_index = np.where(np.mean(val_errors_rf, axis = 1) == min(np.mean(val_errors_rf, axis = 1)))[0][0]
-            if not type(opt_T_index) == int:
+            if not type(opt_T_index) == np.int64:
                 opt_T_index = int(opt_T_index[0])
             else:
                 opt_T_index = int(opt_T_index)
             opt_T = T[opt_T_index]
             optimal_trees.append(opt_T)
             
+            # Optimal hidden layers
             opt_h_index = np.where(np.mean(val_errors_ANN, axis = 1) == min(np.mean(val_errors_ANN, axis = 1)))[0][0]
-            if not type(opt_h_index) == int:
+            if not type(opt_h_index) == np.int64:
                 opt_h_index = int(opt_h_index[0])
             else:
                 opt_h_index = int(opt_h_index)
             opt_h = hiddenLayers[opt_h_index]
             optimal_hidden_layers.append(opt_h)
             
+            # Optimal regularization term
             opt_lambda_index = np.where(np.mean(val_errors_LogReg, axis = 1) == min(np.mean(val_errors_LogReg, axis = 1)))[0][0]
-            if not type(opt_lambda_index) == int:
+            if not type(opt_lambda_index) == np.int64:
                 opt_lambda_index = int(opt_lambda_index[0])
             else:
                 opt_lambda_index = int(opt_lambda_index)
