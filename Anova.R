@@ -22,24 +22,14 @@ boxplot(df$data_all_exps[df$vec_coords=="x"] ~ df$vec_experiments[df$vec_coords=
 boxplot(df$data_all_exps[df$vec_coords=="y"] ~ df$vec_experiments[df$vec_coords=="y"], main="Y-Data vs Experiments", xlab="Experiments", ylab="Y-Data")
 boxplot(df$data_all_exps[df$vec_coords=="z"] ~ df$vec_experiments[df$vec_coords=="z"], main="Z-Data vs Experiments", xlab="Experiments", ylab="Z-Data")
 
-#boxplot(df_e16z$data_all_exps ~ df_e16z$vec_experiments)
 df$vec_people <- factor(df$vec_people, levels=c("p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"))
 par(mfrow=c(1,1))
-#jpeg("Boxplot_X_people.jpg", width = 350, height = "350")
 boxplot(df$data_all_exps[df$vec_coords=="x"] ~ df$vec_people[df$vec_coords=="x"],main="X-Data vs Person", xlab="People", ylab="X-Data")
 boxplot(df$data_all_exps[df$vec_coords=="y"] ~ df$vec_people[df$vec_coords=="y"],main="Y-Data vs Person", xlab="People", ylab="Y-Data")
 boxplot(df$data_all_exps[df$vec_coords=="z"] ~ df$vec_people[df$vec_coords=="z"],main="Z-Data vs Person", xlab="People", ylab="Z-Data")
 
-
-boxplot(df$data_all_exps[df$vec_coords=="z"], df$vec_people[df$vec_coords=="z"],main="Z-Data vs Person", xlab="People", ylab="Z-Data")
-
-
-boxplot(df$data_all_exps[df$vec_coords=="z"] ~ df$vec_experiments[df$vec_coords=="z"], main="Z-Data vs Experiments", xlab="Experiments", ylab="Z-Data")
-
-#Outlier of person2 exp5, plot all repetitions
-min(df$data_all_exps[df$vec_coords=="z"])
+### Outlier of person2 exp5, plot all repetitions
 df_e5z_p2 = subset(df, (df$vec_experiments=="e5" & df$vec_coords=="z" & df$vec_people=="p2"))
-min(df_e5z_p2$data_all_exps)
 boxplot(df_e5z_p2$data_all_exps)
 plot(df_e5z_p2$data_all_exps)
 plot(df_e5z_p2$data_all_exps[601:700], xlab="Time data", ylab="Z-coordinate", main="Person2 Exp5 Rep6")
@@ -47,16 +37,28 @@ plot(df_e5z_p2$data_all_exps[621:647])
 # Person 2 exp 5, repetition 6 has dropped the cylinder possibly since
 #z-coordinate doesnt follow a parabel like all other repeitions
 # sample frequency 110 hertz - 100points per second - meaning less than 1 second to move object
+
+
+df_all_length$length_people <- factor(df_all_length$length_people, levels=c("p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10"))
+boxplot(df_all_length$data_all_lengths ~df_all_length$length_people)
+
+df_all_length$length_experiments <- factor(df_all_length$length_experiments, levels=c("e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15", "e16"))
+boxplot(df_all_length$data_all_lengths ~df_all_length$length_experiments)
+
+library("rgl")
+plot3d(x=data_all_exps[1:100],y=data_all_exps[101:200],z=data_all_exps[201:300],type = 's', 
+       radius = .1,  xlab="x", ylab="y", zlab="z")
+
 }
 
 ### Scatter plots
 {
-library("ggplot2")
 qqnorm(df$data_all_exps[df$vec_coords=="x"], main = "Normal Q-Q Plot X-Data")
 qqnorm(df$data_all_exps[df$vec_coords=="y"], main = "Normal Q-Q Plot Y-Data")
 qqnorm(df$data_all_exps[df$vec_coords=="z"], main = "Normal Q-Q Plot Z-Data")
 # Y-coords are almost normally distributed
 
+library("ggplot2")
 #ggplot(data= df, mapping = aes(x=vec_people[vec_coords=="x"], y=data_all_exps[vec_coords=="x"]))
 ggplot(data= df, mapping = aes(x=vec_people, y=data_all_exps)) + geom_point(size=2, shape=23, colour="blue")
 df_e1 = subset(df, df$vec_experiments=="e1")
@@ -64,7 +66,7 @@ df_e1x = subset(df, (df$vec_experiments=="e1" & df$vec_coords=="x"))
 ggplot(data= df_e1x, mapping = aes(x=vec_people, y=data_all_exps)) + geom_point()
 }
 
-### Feature: Max height of all repetitions for each experiemtn are normally distributed 
+### Feature: Max height of all repetitions for each experiment are normally distributed 
 {
 df_e1z = subset(df, (df$vec_experiments=="e1" & df$vec_coords=="z"))
 l <- 1
@@ -88,7 +90,6 @@ ggplot(df_scatt,aes(x=index_scatt, y=max_exp1z)) + ggtitle("Max Heights for Expe
                                                                                                                                                                                            axis.title=element_text(size=14,face="bold"))
 ggsave("Max_heights_Exp1.jpg")
 
-}
 library("ggplot2")
 df_z = subset(df, df$vec_coords=="z")
 l <- 1
@@ -115,7 +116,7 @@ ggsave("Max_heights_Exp1.jpg")
 Lm <- lm(index_scatt_z ~max_z )
 qqnorm(max_z, main="All Max Heights")
 qqline(Lm)
-
+}
 ### Linear Model
 {
 #L1 <- lm(data_all_exps[1:30000] ~ vec_people[1:30000] +vec_coords[1:30000], data =df)
@@ -140,8 +141,131 @@ qqplot(residuals(L5))
 plot(fitted(L1), residuals(L1))
 
 }
-#Look at the features
 
+###Look at the features 2-way ANOVA
+{
+#Mean
+dfme <- read.csv("Project - 02445/Data/armdataPreprocessedMeans.csv")
+head(dfme)
+# X, Y, Z means should follow people and experiments
+Lmex <- lm(data_all_means[dfme$mean_coords=="x"] ~ mean_people[dfme$mean_coords=="x"] * mean_experiments[dfme$mean_coords=="x"], data = dfme)
+plot(fitted(Lmex), residuals(Lmex))
+qqnorm(residuals(Lmex))
+abline(0, sd(residuals(Lmex)))
+anova(Lmex)
+
+Lmey <- lm(data_all_means[dfme$mean_coords=="y"] ~ mean_people[dfme$mean_coords=="y"] * mean_experiments[dfme$mean_coords=="y"], data = dfme)
+plot(fitted(Lmey), residuals(Lmey))
+qqnorm(residuals(Lmey))
+abline(0, sd(residuals(Lmey)))
+anova(Lmey)
+
+Lmez <- lm(data_all_means[dfme$mean_coords=="z"] ~ mean_people[dfme$mean_coords=="z"] * mean_experiments[dfme$mean_coords=="z"], data = dfme)
+plot(fitted(Lmez), residuals(Lmez))
+qqnorm(residuals(Lmez))
+abline(0, sd(residuals(Lmez)))
+anova(Lmez)
+# Z coordinates: experiments have significant effect p-valye 0.095 compared to people 0.8 p-value
+# X and Y coordinates: people have significatn effect 0.022 and 0.036 respectively. 
+#This makes sense as the x-distance is the same for each experiment
+# y-movement mean should be close to zero and peoples errors should be the main factor, which holds true
+#Interactions are unsignificant
+
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="x"], dfme$mean_people[dfme$mean_coords=="x"])
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="x"], dfme$mean_experiments[dfme$mean_coords=="x"])
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="y"], dfme$mean_people[dfme$mean_coords=="y"])
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="y"], dfme$mean_experiments[dfme$mean_coords=="y"])
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="z"], dfme$mean_people[dfme$mean_coords=="z"])
+kruskal.test(dfme$data_all_means[dfme$mean_coords=="z"], dfme$mean_experiments[dfme$mean_coords=="z"])
+# Same conclusions as two way anova
+}
+{
+# X, Y, Z means should follow people and Experiment 1
+dfme1 <- subset(dfme, dfme$mean_experiments=="e1")
+head(dfme1)
+Lmex <- lm(data_all_means[dfme$mean_coords=="x"] ~ mean_people[dfme$mean_coords=="x"], data = dfme1)
+plot(fitted(Lmex), residuals(Lmex))
+qqnorm(residuals(Lmex))
+abline(0, sd(residuals(Lmex)))
+anova(Lmex)
+
+Lmey <- lm(data_all_means[dfme$mean_coords=="y"] ~ mean_people[dfme$mean_coords=="y"], data = dfme1)
+plot(fitted(Lmey), residuals(Lmey))
+qqnorm(residuals(Lmey))
+abline(0, sd(residuals(Lmey)))
+anova(Lmey)
+
+Lmez <- lm(data_all_means[dfme$mean_coords=="z"] ~ mean_people[dfme$mean_coords=="z"], data = dfme1)
+plot(fitted(Lmez), residuals(Lmez))
+qqnorm(residuals(Lmez))
+abline(0, sd(residuals(Lmez)))
+anova(Lmez)
+
+#For exp 1, all people
+dfme1 <- subset(dfme, dfme$mean_experiments=="e1")
+head(dfme1)
+Lmez <- lm(data_all_means[mean_coords=="x"] ~ mean_people[mean_coords=="x"], data = dfme1)
+plot(fitted(Lmez), residuals(Lmez))
+qqnorm(residuals(Lmez))
+abline(0, sd(residuals(Lmez)))
+anova(Lmez)
+
+#For person 1, all exp
+dfmep1 <- subset(dfme, dfme$mean_people=="p1")
+head(dfmep1)
+Lmep1 <- lm(data_all_means[mean_coords=="x"] ~ mean_experiments[mean_coords=="x"], data = dfmep1)
+plot(fitted(Lmep1), residuals(Lmep1))
+qqnorm(residuals(Lmep1))
+abline(0, sd(residuals(Lmep1)))
+anova(Lmep1)
+
+#For person 1, exp1
+dfmep1e1 <- subset(dfme, (dfme$mean_people=="p1" & dfme$mean_experiments=="e1"))
+head(dfmep1e1)
+boxplot(dfmep1e1$data_all_means)
+Lmep1e1 <- lm(data_all_means[mean_coords=="x"] ~ mean_coords[mean_coords=="x"], data = dfmep1e1)
+length(dfmep1e1$data_all_means[dfmep1e1$mean_coords=="x"] )
+
+plot(fitted(Lmep1e1), residuals(Lmep1e1))
+qqnorm(residuals(Lmep1e1))
+abline(0, sd(residuals(Lmep1e1)))
+anova(Lmep1e1)
+} #Useless anova tests
+
+
+#Max height
+dfh <- read.csv("Project - 02445/Data/armdataPreprocessedMaxs.csv")
+head(dfh)
+dfh <- subset(dfh, dfh$max_coords=="z")
+head(dfh)
+Lhz <- lm(data_all_max ~ max_people* max_experiments, data = dfh)
+plot(fitted(Lhz), residuals(Lhz))
+qqnorm(residuals(Lhz))
+abline(0, sd(residuals(Lhz)))
+# Somewhat normal - as few outliers at low range - not the best fit
+anova(Lhz)
+# Experiments have a significant effect on max heights p: 0.071, whereas people are insignificant p: 0.85
+#possibly do absolute value on y to see maximum curvature of trajectory
+
+#Kruskal-wallis non parametric
+kruskal.test(dfh$data_all_max, dfh$max_people)
+kruskal.test(dfh$data_all_max, dfh$max_experiments)
+# p:0.04 for experiments which is the same finding as above with anova
+
+{
+#For experiment 1
+dfh1 <- subset(dfh, dfh$max_experiments=="e16")
+head(dfh1)
+length(dfh1$data_all_max)
+Lhz1 <- lm(data_all_max ~ max_people, data = dfh1)
+plot(fitted(Lhz1), residuals(Lhz1))
+qqnorm(residuals(Lhz1))
+abline(0, sd(residuals(Lhz1)))
+#Not the best fit
+anova(Lhz1)
+kruskal.test(dfh1$data_all_max, dfh1$max_people)
+#Same conclsuion that people dont have a significant effect on max height
+}
 
 ####### EXPERIMENT 16 #####
 ## d=22.5 and obstacle=S   - using some assumptions
