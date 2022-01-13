@@ -163,7 +163,6 @@ df_all_labels$data_all_exps[338601]
 df_all_labels$data_all_exps[338901]
 
 # Create dataframe for the mean of each coordinate for each repetition
-
 coord_count = 1
 data_all_means <- c(NA, (4800))
 for (i in 1:4800){
@@ -181,8 +180,8 @@ mean_coords <- rep(vec_mean_coords, 16)
 
 df_all_means <- data.frame(data_all_means, mean_people, mean_experiments, mean_coords)
 
-# Create dataframe for the max value of each coordinate for each repetition
 
+# Create dataframe for the max value of each coordinate for each repetition
 data_all_max <- c(NA, (4800))
 max_count = 1
 for (i in 1:4800){
@@ -201,8 +200,44 @@ df_all_max <- data.frame(data_all_max, max_people, max_experiments, max_coords)
 write.csv(df_all_means, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedMeans.csv", row.names = F)
 write.csv(df_all_max, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\armdataPreprocessedMaxs.csv", row.names = F)
 
-# Delete this? 
 
+# Create dataframe for the trajectory length for each repetition 
+#Sum the 100 distances between each 3D point
+data_all_lengths <- c(NA, (1600))
+length_count_rep = 0
+for (i in 1:1600){
+  vector_length = 0
+  for (j in 1:99){
+    x <- data_all_exps[length_count_rep+j+1] - data_all_exps[length_count_rep+j]
+    y <- data_all_exps[length_count_rep+j+101] - data_all_exps[length_count_rep+j+100]
+    z <- data_all_exps[length_count_rep+j+201] - data_all_exps[length_count_rep+j+200]
+    vector_length <- vector_length + sqrt((x)**2 + (y)**2 + (z)**2)
+    #print(paste0(j," x=",x," y=",y," z=",z," vec=", vector_length, "   ", length_count_rep))
+  }
+  data_all_lengths[i] <- vector_length
+  length_count_rep = length_count_rep + 300
+}
+#print(data_all_lengths)
+#Mean length for first experiment, 2nd, 3rd, 4th
+#print(mean(data_all_lengths[1:100]))
+#print(mean(data_all_lengths[101:200]))
+#print(mean(data_all_lengths[201:300]))
+#print(mean(data_all_lengths[301:400]))
+#Mean length all experiments
+#print(mean(data_all_lengths))
+#plot(data_all_exps[1:300])
+
+length_people <- c(rep("p1",10),rep("p2",10), rep("p3",10),rep("p4",10),rep("p5",10), rep("p6",10),
+                        rep("p7",10),rep("p8",10), rep("p9",10), rep("p10",10))
+length_experiments <- c(rep("e1",100),rep("e2",100), rep("e3",100),rep("e4",100),rep("e5",100), rep("e6",100),
+                     rep("e7",100),rep("e8",100), rep("e9",100), rep("e10",100),rep("e11",100), rep("e12",100), 
+                     rep("e13",100),rep("e14",100), rep("e15",100), rep("e16", 100))
+df_all_length <- data.frame(data_all_lengths, length_people, length_experiments)
+View(df_all_length)
+
+
+# Delete this? 
+{
 # vec_e1_groups <- c(rep("e1_p1", 3000),rep("e1_p2", 3000),rep("e1_p3", 3000),rep("e1_p4", 3000),
 #                    rep("e1_p5", 3000),rep("e1_p6", 3000),rep("e1_p7", 3000),rep("e1_p8", 3000),
 #                    rep("e1_p9", 3000),rep("e1_p10", 3000))
@@ -271,3 +306,4 @@ write.csv(df_all_max, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Da
 #                     vec_e6_groups, vec_e7_groups, vec_e8_groups, vec_e9_groups, vec_e10_groups,
 #                     vec_e11_groups, vec_e12_groups, vec_e13_groups, vec_e14_groups, vec_e15_groups,
 #                     vec_e16_groups)
+}
