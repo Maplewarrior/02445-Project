@@ -21,6 +21,7 @@ for (e in 1:16){
     }
   }
 }
+
 vec_experiments <- c(rep("e1", 30000), rep("e2", 30000),rep("e3", 30000),rep("e4", 30000),rep("e5", 30000),rep("e6", 30000),
                      rep("e7", 30000),rep("e8", 30000),rep("e9", 30000),rep("e10", 30000),rep("e11", 30000),rep("e12", 30000),
                      rep("e13", 30000),rep("e14", 30000),rep("e15", 30000),rep("e16", 30000))
@@ -120,6 +121,9 @@ for (i in length(new_nan_indexes):1){
 # df_all$data_all_exps[384202]
 # df_all$data_all_exps[384201]
 
+data_all_exps <- df_all$data_all_exps
+
+which(is.na(data_all_exps), arr.ind = T, useNames = F)
 
 # Save dataframe as a .csv file
 
@@ -130,7 +134,7 @@ write.csv(df_all, "C:\\Users\\micha\\OneDrive\\Skrivebord\\02445-Project\\Data\\
 distances <- c(rep("15", 90000), rep("22.5",90000),rep("30",90000),rep("37.5",90000), rep("45",90000), rep(0, 30000))
 distances[449999:450001]
 
-obstacle <- c(rep("S", 30000), rep("M", 30000), rep("L", 30000))
+obstacle <- c(rep("S", 30000), rep("M", 30000), rep("T", 30000))
 obstacles <-c(rep(obstacle, 5), rep(0, 30000))
 
 df_all_labels <- data.frame(data_all_exps, vec_experiments, vec_coords, vec_people, distances, obstacles)
