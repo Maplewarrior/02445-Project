@@ -225,7 +225,6 @@ for (i in 1:1600){
 #print(mean(data_all_lengths[301:400]))
 #Mean length all experiments
 #print(mean(data_all_lengths))
-#plot(data_all_exps[1:300])
 
 length_people <- c(rep("p1",10),rep("p2",10), rep("p3",10),rep("p4",10),rep("p5",10), rep("p6",10),
                         rep("p7",10),rep("p8",10), rep("p9",10), rep("p10",10))
@@ -233,7 +232,7 @@ length_experiments <- c(rep("e1",100),rep("e2",100), rep("e3",100),rep("e4",100)
                      rep("e7",100),rep("e8",100), rep("e9",100), rep("e10",100),rep("e11",100), rep("e12",100), 
                      rep("e13",100),rep("e14",100), rep("e15",100), rep("e16", 100))
 df_all_length <- data.frame(data_all_lengths, length_people, length_experiments)
-View(df_all_length)
+write.csv(df_all_length, "Project - 02445/Data/armdataPreprocessedLength.csv", row.names = F)
 
 
 # Delete this? 
