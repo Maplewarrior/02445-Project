@@ -3,22 +3,13 @@ import pandas as pd
 from scipy.linalg import svd
 
 from sklearn import tree
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from NeuralNetworkModelFunction import *
 from LogisticRegressionModelFunction import *
 from sklearn.decomposition import PCA
 
 #%%
-# df = pd.read_csv("Data/armdataPreprocessedAllLabels.csv")
-
-
-# data = df["data_all_exps"].to_numpy(dtype=("float64"))
-
-# y_vals = np.array([df["distances"], df["obstacles"]]).T
-# # Remove the last 30000 values since there are no labels
-# X = data[:450000]
-# X = X.reshape(-1,1)
 
 X = np.load("Data/Data For Machine Learning/data_x.npy")
 y = np.load("Data/Data For Machine Learning/data_y.npy")
@@ -27,44 +18,6 @@ y = np.load("Data/Data For Machine Learning/data_y.npy")
 # Make sure there are no NAN values
 assert len(np.isnan(X)[np.isnan(X) == True]) == 0
 
-
-# # One-hot encoding the labels
-# OneHotEncodings = np.empty((15,15))
-# for i in range(15):
-#     template = np.zeros(15)
-#     template[i] = 1
-#     OneHotEncodings[i] = template
-    
-# y = np.empty((450000, 1))
-
-
-
-# count = 30000
-# for i in range(15):
-#     y[(count-30000):count,:] = i
-#     count += 30000
-
-
-# Labels = {str(OneHotEncodings[0]): "d = 15 and S",
-#           str(OneHotEncodings[1]): "d = 15 and M",
-#           str(OneHotEncodings[2]): "d = 15 and T",
-          
-#           str(OneHotEncodings[3]): "d = 22.5 and S",
-#           str(OneHotEncodings[4]): "d = 22.5 and M",
-#           str(OneHotEncodings[5]): "d = 22.5 and T",
-          
-#           str(OneHotEncodings[6]): "d = 30 and S",
-#           str(OneHotEncodings[7]): "d = 30 and M",
-#           str(OneHotEncodings[8]): "d = 30 and T",
-          
-#           str(OneHotEncodings[9]): "d = 37.5 and S",
-#           str(OneHotEncodings[10]): "d = 37.5 and M",
-#           str(OneHotEncodings[11]): "d = 37.5 and T",
-          
-#           str(OneHotEncodings[12]): "d = 45 and S",
-#           str(OneHotEncodings[13]): "d = 45 and M",
-#           str(OneHotEncodings[14]): "d = 45 and T",
-#     }
 Labels = {0: "d = 15 and S",
           1: "d = 15 and M",
           2: "d = 15 and T",
@@ -86,7 +39,7 @@ Labels = {0: "d = 15 and S",
           14: "d = 45 and T",
     }
 
-
+# Functions for PCA
 def subtractMean(X):
     N = np.shape(X)[0]
     return X - np.ones((N, 1)) * X.mean(axis=0)
@@ -103,23 +56,6 @@ def computeSVD(X):
 def computePCAExplainedVariance(S):
     return (S * S) / (S * S).sum()
 
-
-
-# X = data matrix and rho = threshold for explained variance
-# def getVMatrix(X, rho):
-#     # Compute singular values
-#     U, S, V = computeSVD(X)
-#     V = V.T
-    
-#     exp_var = computePCAExplainedVariance(S)
-#     i = 0
-#     num_pcs = exp_var[i]
-#     while num_pcs < rho:
-#         num_pcs += exp_var[i]
-#         i+=1
-#     #X_pca = X @ V[:,:i]
-#     return V[:,:i]  
-
 def getVMatrix(X, i):
     # Compute singular values
     U, S, V = computeSVD(X)
@@ -131,25 +67,48 @@ def projectData(data, V):
 
 
 #%%
-K1 = 5
-K2 = 5
+# Grid search CV for random forest
+# parameters are: 
+#(n_estimators=100, *, criterion='gini', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, 
+#max_features='auto', max_leaf_nodes=None, min_impurity_decrease=0.0, bootstrap=True, oob_score=False, n_jobs=None, 
+#random_state=None, verbose=0, warm_start=False, class_weight=None, ccp_alpha=0.0, max_samples=None)[source]¶
+
+RF_params = {"n_estimators": [30, 50, 70, 90, 100, 120, 140, 200], 
+             "criterion": ["gini", "entropy"],
+             "max_depth": [2, 4, 6, 8, 10, 12, None],
+             "min_samples_split": [2, 5, 10, 15, 20, 25, 30, 40, 50],
+             "min_samples_leaf": [2, 5, 10, 15, 20, 25, 30, 40, 50],
+             "max_features": ["auto", "sqrt", "log2"], 
+             "max_leaf_nodes": [None, 5, 10, 15, 20, 25, 30, 35, 40],
+             "min_impurity_decrease": [0, 0.01, 0.05, 0.07, 0.1, 0.2],
+             "n_jobs":[1, -1],
+             "warm_start": [False, True]
+             }
+rfc = RandomForestClassifier(random_state = 123)
+clf_rf = GridSearchCV(estimator = rfc, param_grid = RF_params, cv = 5)
+CV_rfc.fit(X,y)
+
+
+optimal_hyperparams_rf = clf.cv_result_.keys()
+print(optimal_hyperparams_rf)
+
+
+
+
+#%%
+K1 = 10
+K2 = 10
 
 CV1 = StratifiedKFold(K1, shuffle = True)
 CV2 =  StratifiedKFold(K2, shuffle = True)
 
-
-# Create smaller datasets for faster run time while debugging
-# X = X[:90000]
-# y = y[:90000]
 y = y.squeeze()
-
-
 
 
 # Set hyperparameters
 lambdas = np.power(10.,range(-8,8))
-T = np.arange(25,250,25)
-hiddenLayers = np.arange(2,20,1)
+T = np.arange(75,750, 75)
+hiddenLayers = np.arange(2,20,2)
 
 optimal_trees = list()
 optimal_lambdas = list()
@@ -247,6 +206,7 @@ for train_index, test_index in CV1.split(X, y):
             opt_lambda = lambdas[opt_lambda_index]    
             optimal_lambdas.append(opt_lambda)
         c+= 1
+        print("number of inner folds: ", c, "number of outer folds:", k)
     
     # Estimate generalization error for the s models in the inner fold
     gen_errors_rf[k] = ((X_val.shape[0] / X_par.shape[0]) * val_errors_rf[:,k]).sum(dtype = float)
@@ -276,25 +236,7 @@ for train_index, test_index in CV1.split(X, y):
 print("RF final: ", final_E_gen_RF)
 print("ANN final: ", final_E_gen_ANN)
 print("LogReg final: ", final_E_gen_LogReg)
-#%%
-print(gen_errors_rf)
 
-opt_h_index
-# print(val_errors_rf)
 
-# values = np.array([[1,2,3,4],
-#           [1,2,3,4],
-#           [0,0,1,1],
-#           [4,5,6,4],
-#           [9,1,9,4]])
 
-# opt_index = np.where(np.mean(values, axis = 0) == min(np.mean(values, axis = 0)))
-# opt_index = int(opt_index[0])
-# # print(opt_index)
 
-# # print(np.mean(values[0,:]))
-# # print((1+2+3+4)/4)
-
-# for i in range(5):
-#     print(np.mean(values[i]))
-# print(np.mean(values,axis=1))
