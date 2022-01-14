@@ -66,36 +66,12 @@ def projectData(data, V):
     return data @ V
 
 
-#%%
-# Grid search CV for random forest
-# parameters are: 
-#(n_estimators=100, *, criterion='gini', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, 
-#max_features='auto', max_leaf_nodes=None, min_impurity_decrease=0.0, bootstrap=True, oob_score=False, n_jobs=None, 
-#random_state=None, verbose=0, warm_start=False, class_weight=None, ccp_alpha=0.0, max_samples=None)[source]¶
-
-RF_params = {"n_estimators": [30, 50, 70, 90, 100, 120, 140, 200], 
-             "criterion": ["gini", "entropy"],
-             "max_depth": [2, 4, 6, 8, 10, 12, None],
-             "min_samples_split": [2, 5, 10, 15, 20, 25, 30, 40, 50],
-             "min_samples_leaf": [2, 5, 10, 15, 20, 25, 30, 40, 50],
-             "max_features": ["auto", "sqrt", "log2"], 
-             "max_leaf_nodes": [None, 5, 10, 15, 20, 25, 30, 35, 40],
-             "min_impurity_decrease": [0, 0.01, 0.05, 0.07, 0.1, 0.2],
-             "n_jobs":[1, -1],
-             "warm_start": [False, True]
-             }
-rfc = RandomForestClassifier(random_state = 123)
-clf_rf = GridSearchCV(estimator = rfc, param_grid = RF_params, cv = 5)
-CV_rfc.fit(X,y)
-
-
-optimal_hyperparams_rf = clf.cv_result_.keys()
-print(optimal_hyperparams_rf)
 
 
 
 
 #%%
+
 K1 = 10
 K2 = 10
 
