@@ -11,7 +11,7 @@ def NeuralNetworkModel(X_train,X_test,y_train,y_test,HiddenLayers):
     for i in range(HiddenLayers):
         model.add(layers.Dense(8, activation='relu'))
     
-    model.add(layers.Dense(15, activation='softmax'))
+    model.add(layers.Dense(16, activation='softmax'))
 
     model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer='adam', metrics=['accuracy'])
     

@@ -86,7 +86,7 @@ RF_params = {"n_estimators": [30, 50, 70, 90, 100, 120, 140, 200],
              }
 rfc = RandomForestClassifier(random_state = 123)
 clf_rf = GridSearchCV(estimator = rfc, param_grid = RF_params, cv = 5)
-CV_rfc.fit(X,y)
+clf_rf.fit(X,y)
 
 
 optimal_hyperparams_rf = clf.cv_result_.keys()
