@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 
 #%%
 
-X = np.load("Data/Data For Machine Learning/data_x.npy")
+X = np.load("Data/Data For Machine Learning/data_x_kopi.npy")
 y = np.load("Data/Data For Machine Learning/data_y.npy")
 
 
@@ -82,10 +82,10 @@ y = y.squeeze()
 
 
 # Set hyperparameters
-lambdas = np.power(10.,range(-8,6))
+lambdas = np.power(10.,range(-8,2))
 T = np.arange(75,750, 75)
-hiddenLayers = np.arange(2,14,2)
-
+hiddenLayers = np.arange(2,22,2)
+#%%
 optimal_trees = list()
 optimal_lambdas = list()
 optimal_hidden_layers = list()
@@ -115,6 +115,9 @@ E_gen_vals_log_reg = np.empty((K1,3))
 
 
 #%%
+
+################################ FOR (x,y,z) DATA 
+
 for idx in range(2):
     
     k = 0
@@ -233,6 +236,7 @@ print("LogReg final: ", final_E_gen_LogReg)
 
 
 #%%
+print(val_errors_ANN.shape)
 
 # Pairwise correlated t-test
 
