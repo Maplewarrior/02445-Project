@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 
 #%%
 
-X = np.load("Data/Data For Machine Learning/data_x.npy")
+X = np.load("Data/Data For Machine Learning/data_x_xy.npy")
 y = np.load("Data/Data For Machine Learning/data_y.npy")
 
 
@@ -126,7 +126,7 @@ for idx in range(2):
         y_test = y[test_index]
         
         
-        pca = PCA(n_components = 9)
+        pca = PCA(n_components = 7)
         pca.fit(X_par)
         
         X_par = pca.transform(X_par)
