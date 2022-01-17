@@ -9,13 +9,8 @@ y = np.load("Data/Data For Machine Learning/data_y.npy")
 RF_params = {#"n_estimators": [30, 50, 70, 90, 100, 120, 140, 200], 
               "criterion": ["gini", "entropy"],
               "max_depth": [2, 10, None],
-              "min_samples_split": [2, 5, 10, 15, 20, 25, 50],
-              #"min_samples_leaf": [2, 5, 10, 15, 20, 25, 30, 50],
+              "min_samples_split": [2, 10, 20, 25, 50],
               "max_features": ["auto", "sqrt", "log2"], 
-              #"max_leaf_nodes": [None, 5, 10, 15, 20, 25, 30, 35, 40],
-              #"min_impurity_decrease": [0, 0.01, 0.05, 0.07, 0.1, 0.2],
-              #"n_jobs":[1, -1],
-              #"warm_start": [False, True]
               }
 rfc = RandomForestClassifier(random_state = 123)
 clf_rf = GridSearchCV(estimator = rfc, param_grid = RF_params, cv = 5, scoring = 'accuracy', verbose = 2)
@@ -24,11 +19,14 @@ clf_rf.fit(X,y)
 
 optimal_params_rf = clf_rf.best_params_
 
+
+
 #%%
-optimal_params_rf = {'criterion': 'gini', 
+optimal_params_rf = {'criterion': 
+                     'entropy', 
                      'max_depth': 10, 
                      'max_features': 'auto', 
-                     'min_samples_split': 15}
+                     'min_samples_split': 20}
 
 
 
