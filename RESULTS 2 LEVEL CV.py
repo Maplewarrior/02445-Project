@@ -116,4 +116,267 @@ E_gen_LogReg_final_xy = np.array([0.69375, 0.7125, 0.74375, 0.68125, 0.65625, 0.
                                  0.7375, 0.725, 0.6625, 0.6875,0.6625, 0.71875, 0.725, 0.71875, 0.6875, 0.7])
 
 
+#%%
+import scipy.stats as st
+
+# Pairwise correlated t-test for (x,y,z)
+
+def conf_int(z_obs, alpha,  sigma):
+    CI_lower = st.t.ppf(alpha/2,len(z_obs), np.mean(z_obs), sigma)
+    CI_upper = st.t.ppf(1-(alpha/2),len(z_obs), np.mean(z_obs), sigma)
+    return CI_lower, CI_upper 
+
+
+dif_RF_ANN_xyz = E_gen_RF_final_xyz - E_gen_ANN_final_xyz
+dif_RF_lr_xyz = E_gen_RF_final_xyz - E_gen_LogReg_final_xyz
+dif_ANN_lr_xyz = E_gen_ANN_final_xyz - E_gen_LogReg_final_xyz
+
+J, K = 30, 10
+
+# Compute means 
+r_hat1 = np.mean(dif_RF_ANN_xyz)
+r_hat2 = np.mean(dif_RF_lr_xyz)
+r_hat3 = np.mean(dif_ANN_lr_xyz)
+
+
+s_hat_sq_1 = (1/(J-1))*((dif_RF_ANN_xyz - r_hat1)**2).sum()
+s_hat_sq_2 = (1/(J-1))*((dif_RF_lr_xyz - r_hat2)**2).sum()
+s_hat_sq_3 = (1/(J-1))*((dif_ANN_lr_xyz - r_hat3)**2).sum()
+
+s_thilde_sq_1 = (1/J + 1/(K-1))*s_hat_sq_1
+s_thilde_sq_2 = (1/J + 1/(K-1))*s_hat_sq_2
+s_thilde_sq_3 = (1/J + 1/(K-1))*s_hat_sq_3
+
+
+# Confidence intervals
+
+C1_lower, C1_upper = conf_int(dif_RF_ANN_xyz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_1))
+C2_lower, C2_upper = conf_int(dif_RF_lr_xyz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_2))
+C3_lower, C3_upper = conf_int(dif_ANN_lr_xyz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_3))
+
+# Computing test statistics
+rho = 1/K
+
+t_hat1 = r_hat1/(np.sqrt(s_hat_sq_1)* np.sqrt(1/J + rho/(1-rho)))
+t_hat2 = r_hat2/(np.sqrt(s_hat_sq_2)* np.sqrt(1/J + rho/(1-rho)))
+t_hat3 = r_hat3/(np.sqrt(s_hat_sq_3)* np.sqrt(1/J + rho/(1-rho)))
+
+p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
+p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
+p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
+
+print("for (x,y,z) coordinates: \n")
+
+print("RF vs ANN: ", (C1_lower, C1_upper), p1)
+
+print("RF vs. LogReg: ", (C2_lower, C2_upper), p2)
+
+print("ANN vs. LogReg: ", (C3_lower, C3_upper), p3)
+
+#%%
+
+# For (x,y)
+dif_RF_ANN_xy = E_gen_RF_final_xy - E_gen_ANN_final_xy
+dif_RF_lr_xy = E_gen_RF_final_xy - E_gen_LogReg_final_xy
+dif_ANN_lr_xy = E_gen_ANN_final_xy - E_gen_LogReg_final_xy
+
+J, K = 30, 10
+
+# Compute means 
+r_hat1 = np.mean(dif_RF_ANN_xy)
+r_hat2 = np.mean(dif_RF_lr_xy)
+r_hat3 = np.mean(dif_ANN_lr_xy)
+
+
+s_hat_sq_1 = (1/(J-1))*((dif_RF_ANN_xy - r_hat1)**2).sum()
+s_hat_sq_2 = (1/(J-1))*((dif_RF_lr_xy - r_hat2)**2).sum()
+s_hat_sq_3 = (1/(J-1))*((dif_ANN_lr_xy - r_hat3)**2).sum()
+
+s_thilde_sq_1 = (1/J + 1/(K-1))*s_hat_sq_1
+s_thilde_sq_2 = (1/J + 1/(K-1))*s_hat_sq_2
+s_thilde_sq_3 = (1/J + 1/(K-1))*s_hat_sq_3
+
+
+# Confidence intervals
+
+C1_lower, C1_upper = conf_int(dif_RF_ANN_xy, alpha=0.05, sigma = np.sqrt(s_thilde_sq_1))
+C2_lower, C2_upper = conf_int(dif_RF_lr_xy, alpha=0.05, sigma = np.sqrt(s_thilde_sq_2))
+C3_lower, C3_upper = conf_int(dif_ANN_lr_xy, alpha=0.05, sigma = np.sqrt(s_thilde_sq_3))
+
+# Computing test statistics
+rho = 1/K
+
+t_hat1 = r_hat1/(np.sqrt(s_hat_sq_1)* np.sqrt(1/J + rho/(1-rho)))
+t_hat2 = r_hat2/(np.sqrt(s_hat_sq_2)* np.sqrt(1/J + rho/(1-rho)))
+t_hat3 = r_hat3/(np.sqrt(s_hat_sq_3)* np.sqrt(1/J + rho/(1-rho)))
+
+p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
+p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
+p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
+
+print("for (x,y) coordinates: \n")
+
+print("RF vs ANN: ", (C1_lower, C1_upper), p1)
+
+print("RF vs. LogReg: ", (C2_lower, C2_upper), p2)
+
+print("ANN vs. LogReg: ", (C3_lower, C3_upper), p3)
+
+
+#%%
+
+# For (x,z)
+
+
+dif_RF_ANN_xz = E_gen_RF_final_xz - E_gen_ANN_final_xz
+dif_RF_lr_xz = E_gen_RF_final_xz - E_gen_LogReg_final_xz
+dif_ANN_lr_xz = E_gen_ANN_final_xz - E_gen_LogReg_final_xz
+
+J, K = 30, 10
+
+# Compute means 
+r_hat1 = np.mean(dif_RF_ANN_xz)
+r_hat2 = np.mean(dif_RF_lr_xz)
+r_hat3 = np.mean(dif_ANN_lr_xz)
+
+
+s_hat_sq_1 = (1/(J-1))*((dif_RF_ANN_xz - r_hat1)**2).sum()
+s_hat_sq_2 = (1/(J-1))*((dif_RF_lr_xz - r_hat2)**2).sum()
+s_hat_sq_3 = (1/(J-1))*((dif_ANN_lr_xz - r_hat3)**2).sum()
+
+s_thilde_sq_1 = (1/J + 1/(K-1))*s_hat_sq_1
+s_thilde_sq_2 = (1/J + 1/(K-1))*s_hat_sq_2
+s_thilde_sq_3 = (1/J + 1/(K-1))*s_hat_sq_3
+
+
+# Confidence intervals
+
+C1_lower, C1_upper = conf_int(dif_RF_ANN_xz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_1))
+C2_lower, C2_upper = conf_int(dif_RF_lr_xz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_2))
+C3_lower, C3_upper = conf_int(dif_ANN_lr_xz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_3))
+
+# Computing test statistics
+rho = 1/K
+
+t_hat1 = r_hat1/(np.sqrt(s_hat_sq_1)* np.sqrt(1/J + rho/(1-rho)))
+t_hat2 = r_hat2/(np.sqrt(s_hat_sq_2)* np.sqrt(1/J + rho/(1-rho)))
+t_hat3 = r_hat3/(np.sqrt(s_hat_sq_3)* np.sqrt(1/J + rho/(1-rho)))
+
+p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
+p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
+p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
+
+print("for (x,z) coordinates: \n")
+
+print("RF vs ANN: ", (C1_lower, C1_upper), p1)
+
+print("RF vs. LogReg: ", (C2_lower, C2_upper), p2)
+
+print("ANN vs. LogReg: ", (C3_lower, C3_upper), p3)
+
+#%%
+
+# For (y,z)
+
+dif_RF_ANN_yz = E_gen_RF_final_yz - E_gen_ANN_final_yz
+dif_RF_lr_yz = E_gen_RF_final_yz - E_gen_LogReg_final_yz
+dif_ANN_lr_yz = E_gen_ANN_final_yz - E_gen_LogReg_final_yz
+
+J, K = 30, 10
+
+# Compute means 
+r_hat1 = np.mean(dif_RF_ANN_yz)
+r_hat2 = np.mean(dif_RF_lr_yz)
+r_hat3 = np.mean(dif_ANN_lr_yz)
+
+
+s_hat_sq_1 = (1/(J-1))*((dif_RF_ANN_yz - r_hat1)**2).sum()
+s_hat_sq_2 = (1/(J-1))*((dif_RF_lr_yz - r_hat2)**2).sum()
+s_hat_sq_3 = (1/(J-1))*((dif_ANN_lr_yz - r_hat3)**2).sum()
+
+s_thilde_sq_1 = (1/J + 1/(K-1))*s_hat_sq_1
+s_thilde_sq_2 = (1/J + 1/(K-1))*s_hat_sq_2
+s_thilde_sq_3 = (1/J + 1/(K-1))*s_hat_sq_3
+
+
+# Confidence intervals
+
+C1_lower, C1_upper = conf_int(dif_RF_ANN_yz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_1))
+C2_lower, C2_upper = conf_int(dif_RF_lr_yz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_2))
+C3_lower, C3_upper = conf_int(dif_ANN_lr_yz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_3))
+
+# Computing test statistics
+rho = 1/K
+
+t_hat1 = r_hat1/(np.sqrt(s_hat_sq_1)* np.sqrt(1/J + rho/(1-rho)))
+t_hat2 = r_hat2/(np.sqrt(s_hat_sq_2)* np.sqrt(1/J + rho/(1-rho)))
+t_hat3 = r_hat3/(np.sqrt(s_hat_sq_3)* np.sqrt(1/J + rho/(1-rho)))
+
+p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
+p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
+p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
+
+print("for (y,z) coordinates: \n")
+
+print("RF vs ANN: ", (C1_lower, C1_upper), p1)
+
+print("RF vs. LogReg: ", (C2_lower, C2_upper), p2)
+
+print("ANN vs. LogReg: ", (C3_lower, C3_upper), p3)
+
+
+D#%%
+
+# For difference in coordinates 
+
+
+dif_lr_xyz_and_RF_xz = E_gen_LogReg_final_xyz - E_gen_RF_final_xz
+
+dif_lr_xyz_and_lr_xy = E_gen_LogReg_final_xyz - E_gen_LogReg_final_xy
+
+dif_lr_xyz_and_lr_yz = E_gen_LogReg_final_xyz - E_gen_LogReg_final_yz 
+
+
+
+J, K = 30, 10
+
+# Compute means 
+r_hat1 = np.mean(dif_lr_xyz_and_RF_xz)
+r_hat2 = np.mean(dif_lr_xyz_and_lr_xy)
+r_hat3 = np.mean(dif_lr_xyz_and_lr_yz)
+
+
+s_hat_sq_1 = (1/(J-1))*((dif_lr_xyz_and_RF_xz - r_hat1)**2).sum()
+s_hat_sq_2 = (1/(J-1))*((dif_lr_xyz_and_lr_xy - r_hat2)**2).sum()
+s_hat_sq_3 = (1/(J-1))*((dif_lr_xyz_and_lr_yz - r_hat3)**2).sum()
+
+s_thilde_sq_1 = (1/J + 1/(K-1))*s_hat_sq_1
+s_thilde_sq_2 = (1/J + 1/(K-1))*s_hat_sq_2
+s_thilde_sq_3 = (1/J + 1/(K-1))*s_hat_sq_3
+
+
+# Confidence intervals
+
+C1_lower, C1_upper = conf_int(dif_lr_xyz_and_RF_xz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_1))
+C2_lower, C2_upper = conf_int(dif_lr_xyz_and_lr_xy, alpha=0.05, sigma = np.sqrt(s_thilde_sq_2))
+C3_lower, C3_upper = conf_int(dif_lr_xyz_and_lr_yz, alpha=0.05, sigma = np.sqrt(s_thilde_sq_3))
+
+# Computing test statistics
+rho = 1/K
+
+t_hat1 = r_hat1/(np.sqrt(s_hat_sq_1)* np.sqrt(1/J + rho/(1-rho)))
+t_hat2 = r_hat2/(np.sqrt(s_hat_sq_2)* np.sqrt(1/J + rho/(1-rho)))
+t_hat3 = r_hat3/(np.sqrt(s_hat_sq_3)* np.sqrt(1/J + rho/(1-rho)))
+
+p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
+p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
+p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
+
+print("Comparision of coordinates: \n")
+
+print("(x,y,z) vs. (x,z): ", (C1_lower, C1_upper), p1)
+
+print("(x,y,z) vs. (x,y): ", (C2_lower, C2_upper), p2)
+
+print("(x,y,z) vs. (y,z): ", (C3_lower, C3_upper), p3)
 

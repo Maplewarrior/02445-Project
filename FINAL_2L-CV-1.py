@@ -12,6 +12,8 @@ from RandomForest import *
 #%%
 
 X = np.load("Data/Data For Machine Learning/data_x_xz.npy")
+# X = np.load("Data/Data For Machine Learning/data_x.npy")
+# X = np.load("Data/Data For Machine Learning/data_x_yz.npy")
 y = np.load("Data/Data For Machine Learning/data_y.npy")
 
 
@@ -129,7 +131,7 @@ for train_index, test_index in CV1.split(X, y):
     y_test = y[test_index]
     
     
-    pca = PCA(n_components = 1)
+    pca = PCA(n_components = 8)
     pca.fit(X_par)
     
     X_par = pca.transform(X_par)
@@ -194,14 +196,12 @@ for train_index, test_index in CV1.split(X, y):
     
     
     # Estimate generalization error for the s models in the inner fold
-    # gen_errors_rf[k] = ((X_val.shape[0] / X_par.shape[0]) * np.mean(val_errors_rf[k,:])).sum(dtype = float)
-    # gen_errors_LogReg[k] = ((X_val.shape[0] / X_par.shape[0]) * np.mean(val_errors_LogReg[k,:])).sum(dtype = float)
-    # gen_errors_ANN[k] = (X_val.shape[0] / X_par.shape[0] * np.mean(val_errors_ANN[k,:])).sum(dtype = float)
+    gen_errors_rf[k] = ((X_val.shape[0] / X_par.shape[0]) * np.mean(val_errors_rf[k,:])).sum(dtype = float)
+    gen_errors_LogReg[k] = ((X_val.shape[0] / X_par.shape[0]) * np.mean(val_errors_LogReg[k,:])).sum(dtype = float)
+    gen_errors_ANN[k] = (X_val.shape[0] / X_par.shape[0] * np.mean(val_errors_ANN[k,:])).sum(dtype = float)
     
     
     # Train the models using optimal parameters
-    
-    
     ErrorRateRF = RandomForestModel(X_par, y_par, X_test, y_test, opt_T)
     
     final_E_gen_RF[k] = ErrorRateRF
@@ -212,10 +212,7 @@ for train_index, test_index in CV1.split(X, y):
     ErrorRateLogReg = LogisticRegressionModel(X_par,X_test, y_par, y_test, opt_lambda)
     final_E_gen_LogReg[k] = ErrorRateLogReg
     
-    # if k == K1-1: 
-    #     E_gen_vals_RF[:,idx] = final_E_gen_RF[:,0]
-    #     E_gen_vals_ANN[:,idx] = final_E_gen_ANN[:,0]
-    #     E_gen_vals_log_reg[:,idx] = final_E_gen_LogReg[:,0]            
+               
     k+= 1
 
     
@@ -228,65 +225,4 @@ print("LogReg final: ", final_E_gen_LogReg)
 
 
 
-#%%
-print(val_errors_ANN.shape)
 
-# Pairwise correlated t-test
-
-# dif_lr_rf = np.empty((3,10))
-# dif_rf_bl = np.empty((3,10))
-# dif_lr_bl = np.empty((3,10))
-
-
-# for i in range(3):
-#     dif_lr_rf[i,:] = Gen_err_lr[i,:] - Gen_err_rf[i,:]
-#     dif_lr_bl[i,:] = Gen_err_lr[i,:] - Gen_err_bl[i,:]
-#     dif_rf_bl[i,:] = Gen_err_rf[i,:] - Gen_err_bl[i,:]
-
-# r_hat1 = (np.mean(dif_lr_rf)).sum()
-# r_hat2 = (np.mean(dif_lr_bl)).sum()
-# r_hat3 = (np.mean(dif_rf_bl)).sum()
-
-
-
-# # Compute confidence intervals:
-# def conf_int(z_obs, alpha,  sigma):
-#     return st.t.interval(1-alpha,len(z_obs), np.mean(z_obs), sigma)
-
-# J = 30
-# K = 10
-# # Computing s 
-# s_lr_rf = 1/(J-1 )* ((dif_lr_rf - np.mean(dif_lr_rf))**2).sum()
-# s_lr_bl = 1/(J-1) * ((dif_lr_bl - np.mean(dif_lr_bl))**2).sum()
-# s_rf_bl = 1/(J-1) * ((dif_lr_bl - np.mean(dif_rf_bl))**2).sum()
-
-# # computing the correlation heuristic, rho
-# ## J = 30 splits
-
-# rho = 1/J + 1/(K-1)
-
-# # Sigma(thilde) is now computed:
-# sigma_lr_rf = (1/J + rho/(1-rho))*s_lr_rf
-# sigma_lr_bl = (1/J + rho/(1-rho))*s_lr_bl
-# sigma_rf_bl = (1/J + rho/(1-rho))*s_rf_bl
-
-# # Now the confidence intervals are found:
-
-# ## For LogReg and RF
-# C1 = conf_int(dif_lr_rf, alpha=0.05, sigma = sigma_lr_rf)
-# ## For LogReg and Baseline
-# C2 = conf_int(dif_lr_bl, alpha=0.05, sigma = sigma_lr_bl)
-# ## For RF and Baseline
-# C3 = conf_int(dif_rf_bl, alpha=0.05, sigma = sigma_rf_bl)
-
-# # Now the p-values are found, for this we need t_hat
-# t_hat1 = r_hat1/ (sigma_lr_rf * np.sqrt(1/J + rho/(1-rho)))
-
-# t_hat2 = r_hat2/ (sigma_lr_bl * np.sqrt(1/J + rho/(1-rho)))
-
-# t_hat3 = r_hat3/ (sigma_rf_bl * np.sqrt(1/J + rho/(1-rho)))
-
-# # P-values are found:
-# p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
-# p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
-# p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
