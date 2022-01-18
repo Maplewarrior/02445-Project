@@ -25,7 +25,7 @@ y = np.load("Data/Data For Machine Learning/data_y.npy")
 optimal_params_rf = {'criterion': 
                      'entropy', 
                      'max_depth': 10, 
-                     'max_features': 'sqrt', 
+                     'max_features': "sqrt",
                      'min_samples_split': 20}
 
 

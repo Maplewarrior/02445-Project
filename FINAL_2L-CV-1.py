@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from RandomForest import * 
 #%%
 
-X = np.load("Data/Data For Machine Learning/data_x_xz.npy")
+X = np.load("Data/Data For Machine Learning/data_x.npy")
 # X = np.load("Data/Data For Machine Learning/data_x.npy")
 # X = np.load("Data/Data For Machine Learning/data_x_yz.npy")
 y = np.load("Data/Data For Machine Learning/data_y.npy")
@@ -115,10 +115,7 @@ E_gen_vals_log_reg = np.empty((K1,3))
 
 #%%
 
-################################ FOR (x,z) DATA !!!! PC's = 8
-################################ FOR (x,y) DATA PC's = 7
-################################ FOR (y,z) DATA PC's = 2
-################################ FOR (x,y,z) DATA PC's = 9
+
 
 
 
