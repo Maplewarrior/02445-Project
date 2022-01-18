@@ -39,7 +39,7 @@ optimal_trees_xz = [300, 450, 150, 300, 375, 525, 375, 75 , 300, 450,
 E_gen_RF_final_xz = np.array([
     [0.73125],[0.73125],[0.70625],[0.68125],[0.6625 ],[0.75   ],[0.75   ],[0.6875 ],[0.7625 ],[0.7    ],
     [0.725  ],[0.7375 ],[0.68125],[0.75   ],[0.75625],[0.7    ],[0.7375 ],[0.7125 ],[0.71875],[0.70625], 
-    [0.7625],[0.7375],[0.71875],[0.6875],[75625],[0.775],[0.6625],[0.70625]])
+    [0.7625],[0.7375],[0.71875],[0.6875],[0.75625],[0.775],[0.6625],[0.70625], [0.725], [0.7315]])
 
 optimal_hidden_units_xz = [4, 5, 2, 7, 4, 4, 6, 9 ,5 , 7,
                            9, 5, 8, 3, 3, 5, 3, 7, 11, 10,
@@ -95,92 +95,25 @@ optimal_trees_xy = [525, 675, 450, 525, 300, 525, 150, 300, 375, 750,
                     600, 525, 225, 450, 225, 450, 450, 600, 450, 525
                     ]
 E_gen_RF_final_xy = np.array([
-    [0.7375, 0.79375, 0.775, 0.75625, 0.75625, 0.7875, 0.71875, 0.7625, 0.73125, 0.725 ],
-    [0.7125, 0.7375, 0.73125, 0.80625, 0.71875, 0.750, 0.71875, 0.69375, 0.7625, 0.7125],
-    [0.775, 0.73125, 0.6875, 0.74375, 0.75625, 0.79375, 0.73125, 0.74375,0.73125, 0.725]])
+    0.7375, 0.79375, 0.775, 0.75625, 0.75625, 0.7875, 0.71875, 0.7625, 0.73125, 0.725 ,
+    0.7125, 0.7375, 0.73125, 0.80625, 0.71875, 0.750, 0.71875, 0.69375, 0.7625, 0.7125,
+    0.775, 0.73125, 0.6875, 0.74375, 0.75625, 0.79375, 0.73125, 0.74375,0.73125, 0.725])
 
 optimal_hidden_units_xy = [4, 1, 1, 4, 2, 2, 4, 3, 1, 7,
                            1, 2, 1, 2, 8, 1, 1, 2, 3, 1,
                            8, 2, 3, 2, 1, 2, 2, 2, 4, 4
                            ]
-E_gen_ANN_final_xy = np.array([[0.71875, 0.7, 0.7625, 0.7375, 0.75, 0.71875, 0.75, 0.7377, 0.675, 0.69375], 
-                               [0.74375, 0.78125, 0.7375, 0.75625, 0.6875, 0.70625, 0.71875, 0.76875, 0.70825, 0.71875],
-                               [0.75625, 0.7375, 0.7625, 0.71875,0.70125, 0.75, 0.725, 0.7125, 0.675]])
+E_gen_ANN_final_xy = np.array([[0.71875, 0.7, 0.7625, 0.7375, 0.75, 0.71875, 0.75, 0.7377, 0.675, 0.69375, 
+                               0.74375, 0.78125, 0.7375, 0.75625, 0.6875, 0.70625, 0.71875, 0.76875, 0.70825, 0.71875,
+                               0.75625, 0.7375, 0.7625, 0.71875,0.70125, 0.75, 0.725, 0.7125, 0.675, 0.73125]])
 
 optimal_lambdas_xy = [10, 1, 1e-6, 10, 1e-7, 1e-6, 10, 1e-6, 1e-8, 1,
                       1e-7, 10, 1e-5, 1e-8, 1e-8, 1, 1e-8, 1, 10, 1, 
                       0.01, 10.0, 10.0, 1e-08, 1e-08, 1e-08, 1e-08, 1.0, 1.0, 1e-08]
 
-E_gen_LogReg_final_xy = np.array([0.69375, 0.7125, 074375., 068125., 0.65625, 0.7375, 0.70625, 0.7125, 0.66875, 0.71875,
-                                 0,7125, 0.7125, 0.7125, 0.7, 0.65625, 0.70625, 0.7, 0.6875, 0.65625, 0.69375]
-                                 [0.7375, 0.725, 0.6625, 0.6875,0.6625, 0.71875, 0.275, 0.71875, 0.6875, 0.7])
-
-#%%
-
-import scipy.stats as st
-# Pairwise correlated t-test
-
-dif_lr_rf = np.empty((3,10))
-dif_rf_ANN = np.empty((3,10))
-dif_lr_ANN = np.empty((3,10))
-
-
-E_gen_LogReg_final_xyz = E_gen_LogReg_final_xyz.squeeze()
-E_gen_ANN_final_xyz = E_gen_ANN_final_xyz.squeeze()
-E_gen_RF_final_xyz = E_gen_RF_final_xyz.squeeze()
-
-
-count = 0
-for i in range(3):
-    dif_lr_rf[i,:] = E_gen_LogReg_final_xyz[count:count+10] - E_gen_RF_final_xyz[count:count+10]
-    dif_lr_ANN[i,:] = E_gen_LogReg_final_xyz[count:count+10] - E_gen_ANN_final_xyz[count:count+10]
-    dif_rf_ANN[i,:] = E_gen_RF_final_xyz[count:count+10] - E_gen_ANN_final_xyz[count:count+10]
-    
-    count += 10
-r_hat1 = (np.mean(dif_lr_rf))
-r_hat2 = (np.mean(dif_lr_ANN))
-r_hat3 = (np.mean(dif_rf_ANN))
+E_gen_LogReg_final_xy = np.array([0.69375, 0.7125, 0.74375, 0.68125, 0.65625, 0.7375, 0.70625, 0.7125, 0.66875, 0.71875,
+                                 0.7125, 0.7125, 0.7125, 0.7, 0.65625, 0.70625, 0.7, 0.6875, 0.65625, 0.69375,
+                                 0.7375, 0.725, 0.6625, 0.6875,0.6625, 0.71875, 0.725, 0.71875, 0.6875, 0.7])
 
 
 
-# Compute confidence intervals:
-def conf_int(z_obs, alpha,  sigma):
-    return st.t.interval(1-alpha,len(z_obs), np.mean(z_obs), sigma)
-
-J = 30
-K = 10
-# Computing s 
-s_lr_rf = 1/(J-1 )* ((dif_lr_rf - np.mean(dif_lr_rf))**2).sum()
-s_lr_ANN = 1/(J-1) * ((dif_lr_ANN - np.mean(dif_lr_ANN))**2).sum()
-s_rf_ANN = 1/(J-1) * ((dif_lr_ANN - np.mean(dif_rf_ANN))**2).sum()
-
-# computing the correlation heuristic, rho
-## J = 30 splits
-
-rho = 1/J + 1/(K-1)
-
-# Sigma(thilde) is now computed:
-sigma_lr_rf = (1/J + rho/(1-rho))*s_lr_rf
-sigma_lr_ANN = (1/J + rho/(1-rho))*s_lr_ANN
-sigma_rf_ANN = (1/J + rho/(1-rho))*s_rf_ANN
-
-# Now the confidence intervals are found:
-
-## For LogReg and RF
-C1 = conf_int(dif_lr_rf, alpha=0.05, sigma = sigma_lr_rf)
-## For LogReg and ANN
-C2 = conf_int(dif_lr_ANN, alpha=0.05, sigma = sigma_lr_ANN)
-## For RF and ANN
-C3 = conf_int(dif_rf_ANN, alpha=0.05, sigma = sigma_rf_ANN)
-
-# Now the p-values are found, for this we need t_hat
-t_hat1 = r_hat1/ (sigma_lr_rf * np.sqrt(1/J + rho/(1-rho)))
-
-t_hat2 = r_hat2/ (sigma_lr_ANN * np.sqrt(1/J + rho/(1-rho)))
-
-t_hat3 = r_hat3/ (sigma_rf_ANN * np.sqrt(1/J + rho/(1-rho)))
-
-# P-values are found:
-p1 = 2*st.t.cdf(-abs(t_hat1), J-1, 0, 1)
-p2 = 2*st.t.cdf(-abs(t_hat2), J-1, 0, 1)
-p3 = 2*st.t.cdf(-abs(t_hat3), J-1, 0, 1)
