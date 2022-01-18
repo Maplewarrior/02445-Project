@@ -16,7 +16,7 @@ def NeuralNetworkModel(X_train,X_test,y_train,y_test,HiddenLayers):
     model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer='adam', metrics=['accuracy'])
     
     # Fitting our model to our data
-    model.fit(X_train, y_train, batch_size = 32, epochs=150, validation_data=(X_test, y_test))
+    model.fit(X_train, y_train, batch_size = 32, epochs=150, validation_data=(X_test, y_test), verbose = 0)
     
     predictions = np.array(model.predict(X_test))
     
@@ -26,11 +26,14 @@ def NeuralNetworkModel(X_train,X_test,y_train,y_test,HiddenLayers):
         
         pred = np.where(predictions[i] == np.max(predictions[i]))[0]
         
+        if len(pred) > 1:
+            pred = pred[0]
+        
         if pred == y_test[i]:
             true += 1
     
     error = 1-(true/total)
     
-    print(predictions)
+    # print(predictions)
     
     return error
