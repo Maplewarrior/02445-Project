@@ -234,6 +234,39 @@ length_experiments <- c(rep("e1",100),rep("e2",100), rep("e3",100),rep("e4",100)
 df_all_length <- data.frame(data_all_lengths, length_people, length_experiments)
 write.csv(df_all_length, "Project - 02445/Data/armdataPreprocessedLength.csv", row.names = F)
 
+# Create dataframe for the trajectory energy for each repetition 
+#Sum the 100 distances between each 3D point
+data_all_energy <- c(NA, 1600)
+count_energy = 0
+for (i in 1:1600){
+  vector_energy = 0
+  for (j in 1:99){
+    x <- data_all_exps[count_energy+j+1] - data_all_exps[count_energy+1]
+    y <- data_all_exps[count_energy+j+101] - data_all_exps[count_energy+101]
+    z <- data_all_exps[count_energy+j+201] - data_all_exps[count_energy+201]
+    vector_energy <- vector_energy + sqrt((x)**2 + (y)**2 + (z)**2)
+    #print(paste0(j," x=",x," y=",y," z=",z," vec=", vector_length, "   ", length_count_rep))
+  }
+  data_all_energy[i] <- vector_energy
+  count_energy = count_energy + 300
+}
+#boxplot(data_all_energy[1:100], data_all_energy[101:200], data_all_energy[201:300],data_all_energy[301:400])
+data_all_exps[1]
+data_all_exps[101]
+data_all_exps[201]
+mean(data_all_exps[1:100])
+mean(data_all_exps[101:200])
+mean(data_all_exps[201:300])
+
+#sqrt(31**2 + 4**2 + 36**2)*100
+
+energy_people <- c(rep("p1",10),rep("p2",10), rep("p3",10),rep("p4",10),rep("p5",10), rep("p6",10),
+                   rep("p7",10),rep("p8",10), rep("p9",10), rep("p10",10))
+energy_experiments <- c(rep("e1",100),rep("e2",100), rep("e3",100),rep("e4",100),rep("e5",100), rep("e6",100),
+                        rep("e7",100),rep("e8",100), rep("e9",100), rep("e10",100),rep("e11",100), rep("e12",100), 
+                        rep("e13",100),rep("e14",100), rep("e15",100), rep("e16", 100))
+df_all_energy <- data.frame(data_all_energy, energy_people, energy_experiments)
+write.csv(df_all_energy, "Project - 02445/Data/armdataPreprocessedEnergy.csv", row.names = F)
 
 # Delete this? 
 {
